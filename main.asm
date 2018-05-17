@@ -46,23 +46,6 @@ init:
 	ldi YH, HIGH(matrix)
 	ldi YL, LOW(matrix)
 
-	ldi rTemp, 0b00111100
-	st Y+, rTemp
-	ldi rTemp, 0b01000010
-	st Y+, rTemp
-	ldi rTemp, 0b10100101
-	st Y+, rTemp
-	ldi rTemp, 0b10100101
-	st Y+, rTemp
-	ldi rTemp, 0b10100101
-	st Y+, rTemp
-	ldi rTemp, 0b10011001
-	st Y+, rTemp
-	ldi rTemp, 0b01000010
-	st Y+, rTemp
-	ldi rTemp, 0b00111100
-	st Y, rTemp
-
 main:
 	call screen_update
 	jmp main
@@ -130,7 +113,9 @@ screen_update:
 	cbi PORTD, 5
 
 	ret
+
 reset_columns:
+
 	cbi PORTD, 6
 	cbi PORTD, 7
 	cbi PORTB, 0
