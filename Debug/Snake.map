@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.7  \\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm Fri May 18 13:46:38 2018
+AVRASM ver. 2.2.7  \\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm Fri May 18 14:44:58 2018
 
 
 EQU  SIGNATURE_000 0000001e
@@ -696,21 +696,30 @@ EQU  TWIaddr      00000030
 EQU  SPMRaddr     00000032
 EQU  INT_VECTORS_SIZE 00000034
 DEF  rTemp        r16
+DEF  rRandom      r17
 DEF  rDirection   r23
 DEF  rJoyX        r20
 DEF  rJoyY        r21
 DEF  rTime        r18
 DEF  rCurrentTime r19
 EQU  STARTTIME    00000003
+EQU  DEADZONEHIGH 00000089
+EQU  DEADZONELOW  00000075
 DSEG matrix       00000100
 CSEG reset        00000034
 CSEG timer0       00000065
 CSEG main         00000071
 CSEG timer0_continue 00000069
-CSEG input_x      00000088
-CSEG input_y      00000075
-CSEG screen_update 0000009a
-CSEG ad_doneY     00000080
-CSEG ad_doneX     00000092
-CSEG reset_columns 000000ef
-CSEG light_columns 000000f8
+CSEG input_x      0000008a
+CSEG input_y      00000077
+CSEG move_direction 0000009c
+CSEG screen_update 000000b1
+CSEG random_generate 0000012f
+CSEG ad_doneY     00000082
+CSEG ad_doneX     00000094
+CSEG y_greater    000000a5
+CSEG y_lower      000000a8
+CSEG x_greater    000000ab
+CSEG x_lower      000000ae
+CSEG reset_columns 00000105
+CSEG light_columns 0000010e

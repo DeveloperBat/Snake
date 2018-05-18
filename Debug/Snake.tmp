@@ -22,17 +22,23 @@
   <FILE>Snake.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <matrix><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>20</LINE></matrix>
-  <reset><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>30</LINE></reset>
-  <timer0><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>94</LINE></timer0>
-  <main><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>153</LINE></main>
-  <timer0_continue><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>103</LINE></timer0_continue>
-  <input_x><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>177</LINE></input_x>
-  <input_y><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>159</LINE></input_y>
-  <screen_update><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>193</LINE></screen_update>
-  <ad_doneY><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>170</LINE></ad_doneY>
-  <ad_doneX><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>186</LINE></ad_doneX>
-  <reset_columns><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>303</LINE></reset_columns>
-  <light_columns><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>315</LINE></light_columns>
+  <matrix><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>23</LINE></matrix>
+  <reset><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>33</LINE></reset>
+  <timer0><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>99</LINE></timer0>
+  <main><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>159</LINE></main>
+  <timer0_continue><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>109</LINE></timer0_continue>
+  <input_x><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>185</LINE></input_x>
+  <input_y><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>167</LINE></input_y>
+  <move_direction><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>201</LINE></move_direction>
+  <screen_update><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>233</LINE></screen_update>
+  <random_generate><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>406</LINE></random_generate>
+  <ad_doneY><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>178</LINE></ad_doneY>
+  <ad_doneX><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>194</LINE></ad_doneX>
+  <y_greater><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>217</LINE></y_greater>
+  <y_lower><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>221</LINE></y_lower>
+  <x_greater><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>225</LINE></x_greater>
+  <x_lower><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>229</LINE></x_lower>
+  <reset_columns><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>342</LINE></reset_columns>
+  <light_columns><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>354</LINE></light_columns>
  </LABELS>
 </ASSEMBLER_INFO>

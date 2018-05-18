@@ -16,6 +16,8 @@
 
 //Time for timer0
 .EQU STARTTIME = 3
+.EQU DEADZONEHIGH = 0x89
+.EQU DEADZONELOW = 0x75
 
 .DSEG
 matrix:	.BYTE 8
@@ -157,6 +159,7 @@ timer0:
 main:
 	rcall input_x
 	rcall input_y
+	rcall move_direction
 	rcall screen_update
 	rcall random_generate
 	rjmp main
@@ -195,6 +198,38 @@ input_x:
 	lds rJoyX, ADCH
 	ret
 
+move_direction:
+	cpi rJoyY, 197
+	brsh y_greater
+
+	cpi rJoyY, 62
+	brlo y_lower
+
+	cpi rJoyX, 137
+	brsh x_greater
+
+	cpi rJoyX, 100
+	brlo x_lower
+
+	ret
+
+	// Joystick up
+	y_greater:
+		lds rDirection, 0x1
+		ret
+	// Joystick down
+	y_lower:
+		lds rDirection, 0x2
+		ret
+	// Joystick left
+	x_greater:
+		lds rDirection, 0x3
+		ret
+	// Joystick right
+	x_lower:
+		lds rDirection, 0x4
+		ret
+
 screen_update:
 	//Updates the screen with data from the 8 byte Matrix.
 	//
@@ -207,7 +242,6 @@ screen_update:
 
 	//Matrix 1
 	ld rTemp, Y+
-	st Y, rJoyY
 	rcall reset_columns
 	sbi PORTC, 0
 	rcall light_columns
@@ -221,7 +255,6 @@ screen_update:
 	//Matrix 2
 	ld rTemp, Y+
 	rcall reset_columns
-	st Y, rJoyX
 	sbi PORTC, 1
 	rcall light_columns
 	rcall light_columns
