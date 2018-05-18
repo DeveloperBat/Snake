@@ -1,18 +1,18 @@
 <ASSEMBLER_INFO>
  <VERSION>2.2.7</VERSION>
  <DEVICE>"ATmega328P"</DEVICE>
- <WORKING_DIR>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\Debug</WORKING_DIR>
+ <WORKING_DIR>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\Debug</WORKING_DIR>
  <INCLUDE_PATH>
   <DIR>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.150\avrasm\inc</DIR>
   <DIR>C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avrassembler\Include</DIR>
   <DIR></DIR>
  </INCLUDE_PATH>
- <SOURCE_FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</SOURCE_FILE>
+ <SOURCE_FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</SOURCE_FILE>
  <INCLUDED_FILES>
   <FILE>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.150\avrasm\inc\m328pdef.inc</FILE>
  </INCLUDED_FILES>
  <OBJECT_FILES>
-  <FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\Debug\Snake.obj</FILE>
+  <FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\Debug\Snake.obj</FILE>
  </OBJECT_FILES>
  <HEX_FILES>
   <FILE>Snake.hex</FILE>
@@ -22,17 +22,19 @@
   <FILE>Snake.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <matrix><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>20</LINE></matrix>
-  <reset><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>30</LINE></reset>
-  <timer0><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>94</LINE></timer0>
-  <main><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>153</LINE></main>
-  <timer0_continue><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>103</LINE></timer0_continue>
-  <input_x><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>177</LINE></input_x>
-  <input_y><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>159</LINE></input_y>
-  <screen_update><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>193</LINE></screen_update>
-  <ad_doneY><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>170</LINE></ad_doneY>
-  <ad_doneX><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>186</LINE></ad_doneX>
-  <reset_columns><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>303</LINE></reset_columns>
-  <light_columns><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>315</LINE></light_columns>
+  <matrix><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>22</LINE></matrix>
+  <reset><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>32</LINE></reset>
+  <timer0><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>98</LINE></timer0>
+  <main><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>132</LINE></main>
+  <timer0_continue><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>108</LINE></timer0_continue>
+  <create_apple><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>122</LINE></create_apple>
+  <input_x><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>157</LINE></input_x>
+  <input_y><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>139</LINE></input_y>
+  <random_generate><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>345</LINE></random_generate>
+  <screen_update><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>173</LINE></screen_update>
+  <ad_doneY><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>150</LINE></ad_doneY>
+  <ad_doneX><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>166</LINE></ad_doneX>
+  <reset_columns><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>281</LINE></reset_columns>
+  <light_columns><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>293</LINE></light_columns>
  </LABELS>
 </ASSEMBLER_INFO>

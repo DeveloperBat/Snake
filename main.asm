@@ -5,14 +5,15 @@
 ; Author : Hampus Österlund, Rickardh Forslund
 ;
 
+.DEF rApple = r2
 .DEF rTemp = r16
-.DEF rRandom = r17
-.DEF rDirection = r23
+.DEF rRandomX = r17
+.DEF rRandomY = r18
+.DEF rTime = r19
 .DEF rJoyX = r20
 .DEF rJoyY = r21
-
-.DEF rTime = r18
-.DEF rCurrentTime = r19
+.DEF rCurrentTime = r22
+.DEF rDirection = r23
 
 //Time for timer0
 .EQU STARTTIME = 3
@@ -112,41 +113,15 @@ timer0:
 		in rTemp, SREG
 		push rTemp
 
-		/*//Execute code
+		//GAME LOGIC HERE
+
+		//Initiating Z-Pointer to matrix.
 		ldi ZH, HIGH(matrix)
 		ldi ZL, LOW(matrix)
 
-		ld rTemp, Z
-		inc rTemp
-		st Z+, rTemp
+		create_apple:
+		//Creates a position for the apple.
 
-		ld rTemp, Z
-		inc rTemp
-		st Z+, rTemp
-
-		ld rTemp, Z
-		inc rTemp
-		st Z+, rTemp
-
-		ld rTemp, Z
-		inc rTemp
-		st Z+, rTemp
-
-		ld rTemp, Z
-		inc rTemp
-		st Z+, rTemp
-
-		ld rTemp, Z
-		inc rTemp
-		st Z+, rTemp
-
-		ld rTemp, Z
-		inc rTemp
-		st Z+, rTemp
-
-		ld rTemp, Z
-		inc rTemp
-		st Z+, rTemp*/
 
 		//Pop SREG and rTemp from stack and restore them.
 		pop rTemp
@@ -157,8 +132,8 @@ timer0:
 main:
 	rcall input_x
 	rcall input_y
-	rcall screen_update
 	rcall random_generate
+	rcall screen_update
 	rjmp main
 
 input_y:
@@ -207,7 +182,6 @@ screen_update:
 
 	//Matrix 1
 	ld rTemp, Y+
-	st Y, rJoyY
 	rcall reset_columns
 	sbi PORTC, 0
 	rcall light_columns
@@ -221,7 +195,6 @@ screen_update:
 	//Matrix 2
 	ld rTemp, Y+
 	rcall reset_columns
-	st Y, rJoyX
 	sbi PORTC, 1
 	rcall light_columns
 	rcall light_columns
@@ -370,4 +343,12 @@ light_columns:
 	ret
 
 random_generate:
-	ldi rRandom, 0
+	//Generate a random X value.
+	add rRandomX, rJoyX
+	subi rRandomX, -5
+
+	//Generate a random Y value.
+	add rRandomY, rJoyY
+	subi rRandomY, -5
+
+	ret
