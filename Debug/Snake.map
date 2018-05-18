@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.7  C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Fri May 18 13:21:41 2018
+AVRASM ver. 2.2.7  C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Fri May 18 13:45:38 2018
 
 
 EQU  SIGNATURE_000 0000001e
@@ -696,6 +696,7 @@ EQU  TWIaddr      00000030
 EQU  SPMRaddr     00000032
 EQU  INT_VECTORS_SIZE 00000034
 DEF  rTemp        r16
+DEF  rRandom      r17
 DEF  rDirection   r23
 DEF  rTime        r18
 DEF  rCurrentTime r19
@@ -703,8 +704,9 @@ EQU  STARTTIME    00000003
 DSEG matrix       00000100
 CSEG reset        00000034
 CSEG timer0       0000005b
-CSEG main         00000081
+CSEG main         000000ff
 CSEG timer0_continue 0000005f
-CSEG screen_update 00000083
-CSEG reset_columns 000000d6
-CSEG light_columns 000000df
+CSEG screen_update 00000081
+CSEG reset_columns 000000d4
+CSEG light_columns 000000dd
+CSEG random_generate 000000fe

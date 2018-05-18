@@ -6,6 +6,7 @@
 ;
 
 .DEF rTemp = r16
+.DEF rRandom = r17
 .DEF rDirection = r23
 
 .DEF rTime = r18
@@ -77,11 +78,14 @@ reset:
 	st Y+, rTemp
 	ldi rTemp, 0b00000000
 	st Y, rTemp
+	
+	//Initialize random byte to rRandom
 
 	rjmp main
 
 timer0:
 	//Timer0 has been overflowed, start ISR.
+	//This ISR is where we have put our game code.
 
 	//Compare with rTime register.
 	cp rTime, rCurrentTime
@@ -92,7 +96,7 @@ timer0:
 	timer0_continue:
 		clr rCurrentTime
 
-		//Push rTemp and SREG to stack.
+		//Push rTemp and SREG to stack to be able to restore them once we exit the interrupt.
 		push rTemp
 		in rTemp, SREG
 		push rTemp
@@ -133,15 +137,11 @@ timer0:
 		inc rTemp
 		st Z+, rTemp
 
-		//Pop SREG and rTemp from stack.
+		//Pop SREG and rTemp from stack and restore them.
 		pop rTemp
 		out SREG, rTemp
 		pop rTemp
 		reti
-
-main:
-	rcall screen_update
-	rjmp main
 
 screen_update:
 	//Updates the screen with data from the 8 byte Matrix.
@@ -315,88 +315,11 @@ light_columns:
 
 	ret
 
+random_generate:
+	ldi rRandom, 0
+	
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*light_one:
-	ldi	rTemp, 0b00000001
-	out PORTC, rTemp
-	ldi	rTemp, 0b01000000
-	out PORTD, rTemp*/
-
-/*light_row:
-	ldi rTemp, 0b00000001
-	out PORTC, rTemp
-	ldi rTemp, 0b11000000
-	out PORTD, rTemp
-	ldi rTemp, 0b00111111
-	out PORTB, rTemp*/
-
-/*light_all:
-	//Light row one
-	ldi rTemp, 0b00000001
-	out PORTC, rTemp
-	ldi rTemp, 0b11000000
-	out PORTD, rTemp
-	ldi rTemp, 0b00111111
-	out PORTB, rTemp
-
-	ldi rTemp, 0b00000010
-	out PORTC, rTemp
-
-	//light row three
-	ldi rTemp, 0b00000100
-	out PORTC, rTemp
-
-	//light row 4
-	ldi rTemp, 0b00001000
-	out PORTC, rTemp
-
-	//light row 5
-	ldi rTemp, 0b00000000
-	out PORTC, rTemp
-	ldi rTemp, 0b11000100
-	out PORTD, rTemp
-
-	//light row 6
-	ldi rTemp, 0b11001000
-	out PORTD, rTemp
-
-	//light row 7
-	ldi rTemp, 0b11010000
-	out PORTD, rTemp
-
-	//light row 8
-	ldi rTemp, 0b11100000
-	out PORTD, rTemp
-
-	jmp light_all*/
-
-
-//GAME LOGIC
+main:
+	rcall screen_update
+	rcall random_generate
+	rjmp main
