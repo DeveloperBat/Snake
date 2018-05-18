@@ -8,7 +8,11 @@
 .DEF rTemp = r16
 .DEF rDirection = r23
 
-.DEF rRow = r17
+.DEF rTime = r18
+.DEF rCurrentTime = r19
+
+//Time for timer0
+.EQU STARTTIME = 3
 
 .DSEG
 matrix:	.BYTE 8
@@ -28,19 +32,21 @@ reset:
     ldi rTemp, LOW(RAMEND)
     out SPL, rTemp
 
-	//Global interrupt enable
-	ldi rTemp, 128
-	out SREG, rTemp
-
-	//Set timer counter to 0
-	ldi rTemp, 0
-	out TCNT0, rTemp
+	//Set rTime
+	ldi rTime, STARTTIME
+	//Set rCurrentTime
+	ldi rCurrentTime, 0
 	//Prescaling = 1024
 	ldi rTemp, 5
 	out TCCR0B, rTemp
+	//Global interrupt enable
+	sei
 	//Enable Overflow Interrupt
 	ldi rTemp, 1
 	sts TIMSK0, rTemp
+	//Set timer counter to 0
+	ldi rTemp, 0
+	out TCNT0, rTemp
 
 	//Set ports C,D och B on LED-JOY to output.
 	ldi rTemp, 0b00001111
@@ -55,21 +61,21 @@ reset:
 	ldi YL, LOW(matrix)
 
 	//Save some good stuff to Matrix
-	ldi rTemp, 0b00010000
+	ldi rTemp, 0b00000000
 	st Y+, rTemp
-	ldi rTemp, 0b00100000
+	ldi rTemp, 0b00000000
 	st Y+, rTemp
-	ldi rTemp, 0b00010000
+	ldi rTemp, 0b00000000
 	st Y+, rTemp
-	ldi rTemp, 0b00100000
+	ldi rTemp, 0b00000000
 	st Y+, rTemp
-	ldi rTemp, 0b00010000
+	ldi rTemp, 0b00000000
 	st Y+, rTemp
-	ldi rTemp, 0b00100000
+	ldi rTemp, 0b00000000
 	st Y+, rTemp
-	ldi rTemp, 0b00010000
+	ldi rTemp, 0b00000000
 	st Y+, rTemp
-	ldi rTemp, 0b00100000
+	ldi rTemp, 0b00000000
 	st Y, rTemp
 
 	rjmp main
@@ -77,28 +83,63 @@ reset:
 timer0:
 	//Timer0 has been overflowed, start ISR.
 
-	//Push rTemp, SREG and Y to stack.
-	push rTemp
-	in rTemp, SREG
-	push rTemp
-	ld rTemp, Y
-	push rTemp
-
-	//Execute code
-	ldi ZH, HIGH(matrix)
-	ldi ZL, LOW(matrix)
-
-	ld rTemp, Z
-	inc rTemp
-	st Z+, rTemp
-
-	//Pop Y, SREG and rTemp from stack.
-	pop rTemp
-	st Y, rTemp
-	pop rTemp
-	out SREG, rTemp
-	pop rTemp
+	//Compare with rTime register.
+	cp rTime, rCurrentTime
+	brlt timer0_continue
+	inc rCurrentTime
 	reti
+
+	timer0_continue:
+		clr rCurrentTime
+
+		//Push rTemp and SREG to stack.
+		push rTemp
+		in rTemp, SREG
+		push rTemp
+
+		//Execute code
+		ldi ZH, HIGH(matrix)
+		ldi ZL, LOW(matrix)
+
+		ld rTemp, Z
+		inc rTemp
+		st Z+, rTemp
+
+		ld rTemp, Z
+		inc rTemp
+		st Z+, rTemp
+
+		ld rTemp, Z
+		inc rTemp
+		st Z+, rTemp
+
+		ld rTemp, Z
+		inc rTemp
+		st Z+, rTemp
+
+		ld rTemp, Z
+		inc rTemp
+		st Z+, rTemp
+
+		ld rTemp, Z
+		inc rTemp
+		st Z+, rTemp
+
+		ld rTemp, Z
+		inc rTemp
+		st Z+, rTemp
+
+		ld rTemp, Z
+		inc rTemp
+		st Z+, rTemp
+
+		rcall screen_update
+
+		//Pop SREG and rTemp from stack.
+		pop rTemp
+		out SREG, rTemp
+		pop rTemp
+		reti
 
 main:
 	rcall screen_update
@@ -115,7 +156,7 @@ screen_update:
 	ldi YL, LOW(matrix)
 
 	//Matrix 1
-	ld rRow, Y+
+	ld rTemp, Y+
 	rcall reset_columns
 	sbi PORTC, 0
 	rcall light_columns
@@ -127,7 +168,7 @@ screen_update:
 	cbi PORTC, 0
 	
 	//Matrix 2
-	ld rRow, Y+
+	ld rTemp, Y+
 	rcall reset_columns
 	sbi PORTC, 1
 	rcall light_columns
@@ -139,7 +180,7 @@ screen_update:
 	cbi PORTC, 1
 
 	//Matrix 3
-	ld rRow, Y+
+	ld rTemp, Y+
 	rcall reset_columns
 	sbi PORTC, 2
 	rcall light_columns
@@ -151,7 +192,7 @@ screen_update:
 	cbi PORTC, 2
 
 	//Matrix 4
-	ld rRow, Y+
+	ld rTemp, Y+
 	rcall reset_columns
 	sbi PORTC, 3
 	rcall light_columns
@@ -163,7 +204,7 @@ screen_update:
 	cbi PORTC, 3
 
 	//Matrix 5
-	ld rRow, Y+
+	ld rTemp, Y+
 	rcall reset_columns
 	sbi PORTD, 2
 	rcall light_columns
@@ -175,7 +216,7 @@ screen_update:
 	cbi PORTD, 2
 
 	//Matrix 6
-	ld rRow, Y+
+	ld rTemp, Y+
 	rcall reset_columns
 	sbi PORTD, 3
 	rcall light_columns
@@ -187,7 +228,7 @@ screen_update:
 	cbi PORTD, 3
 
 	//Matrix 7
-	ld rRow, Y+
+	ld rTemp, Y+
 	rcall reset_columns
 	sbi PORTD, 4
 	rcall light_columns
@@ -199,7 +240,7 @@ screen_update:
 	cbi PORTD, 4
 
 	//Matrix 8
-	ld rRow, Y
+	ld rTemp, Y
 	rcall reset_columns
 	sbi PORTD, 5
 	rcall light_columns
@@ -227,51 +268,51 @@ reset_columns:
 light_columns:
 
 	//Light 1
-	sbrc rRow, 0
+	sbrc rTemp, 0
 	sbi PORTD, 6
-	sbrs rRow, 0
+	sbrs rTemp, 0
 	cbi PORTD, 6
 
 	//Light 2 if set.
-	sbrc rRow, 1
+	sbrc rTemp, 1
 	sbi PORTD, 7
-	sbrs rRow, 1
+	sbrs rTemp, 1
 	cbi PORTD, 7
 
 	//Light 3 if set.
-	sbrc rRow, 2
+	sbrc rTemp, 2
 	sbi PORTB, 0
-	sbrs rRow, 2
+	sbrs rTemp, 2
 	cbi PORTB, 0
 
 	//Light 4 if set.
-	sbrc rRow, 3
+	sbrc rTemp, 3
 	sbi PORTB, 1
-	sbrs rRow, 3
+	sbrs rTemp, 3
 	cbi PORTB, 1
 
 	//Light 5 if set.
-	sbrc rRow, 4
+	sbrc rTemp, 4
 	sbi PORTB, 2
-	sbrs rRow, 4
+	sbrs rTemp, 4
 	cbi PORTB, 2
 
 	//Light 6 if set.
-	sbrc rRow, 5
+	sbrc rTemp, 5
 	sbi PORTB, 3
-	sbrs rRow, 5
+	sbrs rTemp, 5
 	cbi PORTB, 3
 
 	//Light 7 if set.
-	sbrc rRow, 6
+	sbrc rTemp, 6
 	sbi PORTB, 4
-	sbrs rRow, 6
+	sbrs rTemp, 6
 	cbi PORTB, 4
 
 	//Light 8 if set.
-	sbrc rRow, 7
+	sbrc rTemp, 7
 	sbi PORTB, 5
-	sbrs rRow, 7
+	sbrs rTemp, 7
 	cbi PORTB, 5
 
 	ret
