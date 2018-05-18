@@ -14,19 +14,35 @@
 matrix:	.BYTE 8
 
 .CSEG
-// Interrupt vector table.
-.ORG 0x0000
-	jmp init // Reset vector.
+//Interrupt vector table.
+.ORG 0x0000	//Reset vector.
+	rjmp reset
+.ORG 0x0020 //Timer0 overflow
+	rjmp timer0
 .ORG INT_VECTORS_SIZE
 
-init:
-    // Set stackpointer to highest memory address.
+reset:
+    //Set stackpointer to highest memory address.
     ldi rTemp, HIGH(RAMEND)
     out SPH, rTemp
     ldi rTemp, LOW(RAMEND)
     out SPL, rTemp
 
-	//Sätt portarna C,D och B på LED-JOY till outputläge.
+	//Global interrupt enable
+	ldi rTemp, 128
+	out SREG, rTemp
+
+	//Set timer counter to 0
+	ldi rTemp, 0
+	out TCNT0, rTemp
+	//Prescaling = 1024
+	ldi rTemp, 5
+	out TCCR0B, rTemp
+	//Enable Overflow Interrupt
+	ldi rTemp, 1
+	sts TIMSK0, rTemp
+
+	//Set ports C,D och B on LED-JOY to output.
 	ldi rTemp, 0b00001111
 	out DDRC, rTemp
 	ldi rTemp, 0b11111100
@@ -34,82 +50,164 @@ init:
 	ldi rTemp, 0b00111111
 	out DDRB, rTemp
 
-	//Clear I/O ports.
-	ldi rTemp, 0b00000000
-	out PORTC, rTemp
-	ldi rTemp, 0b00000000
-	out PORTD, rTemp
-	ldi rTemp, 0b00000000
-	out PORTB, rTemp
-
 	//Make a pointer to Matrix and store it in Y.
 	ldi YH, HIGH(matrix)
 	ldi YL, LOW(matrix)
 
+	//Save some good stuff to Matrix
+	ldi rTemp, 0b00010000
+	st Y+, rTemp
+	ldi rTemp, 0b00100000
+	st Y+, rTemp
+	ldi rTemp, 0b00010000
+	st Y+, rTemp
+	ldi rTemp, 0b00100000
+	st Y+, rTemp
+	ldi rTemp, 0b00010000
+	st Y+, rTemp
+	ldi rTemp, 0b00100000
+	st Y+, rTemp
+	ldi rTemp, 0b00010000
+	st Y+, rTemp
+	ldi rTemp, 0b00100000
+	st Y, rTemp
+
+	rjmp main
+
+timer0:
+	//Timer0 has been overflowed, start ISR.
+
+	//Push rTemp, SREG and Y to stack.
+	push rTemp
+	in rTemp, SREG
+	push rTemp
+	ld rTemp, Y
+	push rTemp
+
+	//Execute code
+	ldi ZH, HIGH(matrix)
+	ldi ZL, LOW(matrix)
+
+	ld rTemp, Z
+	inc rTemp
+	st Z+, rTemp
+
+	//Pop Y, SREG and rTemp from stack.
+	pop rTemp
+	st Y, rTemp
+	pop rTemp
+	out SREG, rTemp
+	pop rTemp
+	reti
+
 main:
-	call screen_update
-	jmp main
+	rcall screen_update
+	rjmp main
 
 screen_update:
-	
+	//Updates the screen with data from the 8 byte Matrix.
+	//
+	//The instructions: Resets columns, activates row, activates columns and finally deactivates the row.
+	//Calling light columns several times to increase the time they get energized. (Increased light level)
+
 	//Reset pointer to Matrix.
 	ldi YH, HIGH(matrix)
 	ldi YL, LOW(matrix)
 
 	//Matrix 1
 	ld rRow, Y+
-	call reset_columns
+	rcall reset_columns
 	sbi PORTC, 0
-	call light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
 	cbi PORTC, 0
 	
 	//Matrix 2
 	ld rRow, Y+
-	call reset_columns
+	rcall reset_columns
 	sbi PORTC, 1
-	call light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
 	cbi PORTC, 1
 
 	//Matrix 3
 	ld rRow, Y+
-	call reset_columns
+	rcall reset_columns
 	sbi PORTC, 2
-	call light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
 	cbi PORTC, 2
 
 	//Matrix 4
 	ld rRow, Y+
-	call reset_columns
+	rcall reset_columns
 	sbi PORTC, 3
-	call light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
 	cbi PORTC, 3
 
 	//Matrix 5
 	ld rRow, Y+
-	call reset_columns
+	rcall reset_columns
 	sbi PORTD, 2
-	call light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
 	cbi PORTD, 2
 
 	//Matrix 6
 	ld rRow, Y+
-	call reset_columns
+	rcall reset_columns
 	sbi PORTD, 3
-	call light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
 	cbi PORTD, 3
 
 	//Matrix 7
 	ld rRow, Y+
-	call reset_columns
+	rcall reset_columns
 	sbi PORTD, 4
-	call light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
 	cbi PORTD, 4
 
 	//Matrix 8
 	ld rRow, Y
-	call reset_columns
+	rcall reset_columns
 	sbi PORTD, 5
-	call light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
+	rcall light_columns
 	cbi PORTD, 5
 
 	ret
@@ -124,6 +222,7 @@ reset_columns:
 	cbi PORTB, 3
 	cbi PORTB, 4
 	cbi PORTB, 5
+	ret
 
 light_columns:
 
