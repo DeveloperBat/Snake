@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.7  C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Fri May 18 12:50:01 2018
+AVRASM ver. 2.2.7  C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Fri May 18 13:21:41 2018
 
 
 EQU  SIGNATURE_000 0000001e
@@ -703,8 +703,8 @@ EQU  STARTTIME    00000003
 DSEG matrix       00000100
 CSEG reset        00000034
 CSEG timer0       0000005b
-CSEG main         00000082
+CSEG main         00000081
 CSEG timer0_continue 0000005f
-CSEG screen_update 00000084
-CSEG reset_columns 000000d7
-CSEG light_columns 000000e0
+CSEG screen_update 00000083
+CSEG reset_columns 000000d6
+CSEG light_columns 000000df

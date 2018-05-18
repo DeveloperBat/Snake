@@ -133,8 +133,6 @@ timer0:
 		inc rTemp
 		st Z+, rTemp
 
-		rcall screen_update
-
 		//Pop SREG and rTemp from stack.
 		pop rTemp
 		out SREG, rTemp

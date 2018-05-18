@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.7  C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Fri May 18 12:50:01 2018
+AVRASM ver. 2.2.7  C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Fri May 18 13:21:41 2018
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.150\avrasm\inc\m328pdef.inc'
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.150\avrasm\inc\m328pdef.inc'
@@ -1064,7 +1064,7 @@ AVRASM ver. 2.2.7  C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Sn
 000058 e000                      	ldi rTemp, 0b00000000
 000059 8308                      	st Y, rTemp
                                  
-00005a c027                      	rjmp main
+00005a c026                      	rjmp main
                                  
                                  timer0:
                                  	//Timer0 has been overflowed, start ISR.
@@ -1119,17 +1119,15 @@ AVRASM ver. 2.2.7  C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Sn
 00007b 9503                      		inc rTemp
 00007c 9301                      		st Z+, rTemp
                                  
-00007d d006                      		rcall screen_update
-                                 
                                  		//Pop SREG and rTemp from stack.
-00007e 910f                      		pop rTemp
-00007f bf0f                      		out SREG, rTemp
-000080 910f                      		pop rTemp
-000081 9518                      		reti
+00007d 910f                      		pop rTemp
+00007e bf0f                      		out SREG, rTemp
+00007f 910f                      		pop rTemp
+000080 9518                      		reti
                                  
                                  main:
-000082 d001                      	rcall screen_update
-000083 cffe                      	rjmp main
+000081 d001                      	rcall screen_update
+000082 cffe                      	rjmp main
                                  
                                  screen_update:
                                  	//Updates the screen with data from the 8 byte Matrix.
@@ -1138,170 +1136,170 @@ AVRASM ver. 2.2.7  C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Sn
                                  	//Calling light columns several times to increase the time they get energized. (Increased light level)
                                  
                                  	//Reset pointer to Matrix.
-000084 e0d1                      	ldi YH, HIGH(matrix)
-000085 e0c0                      	ldi YL, LOW(matrix)
+000083 e0d1                      	ldi YH, HIGH(matrix)
+000084 e0c0                      	ldi YL, LOW(matrix)
                                  
                                  	//Matrix 1
-000086 9109                      	ld rTemp, Y+
-000087 d04f                      	rcall reset_columns
-000088 9a40                      	sbi PORTC, 0
-000089 d056                      	rcall light_columns
-00008a d055                      	rcall light_columns
-00008b d054                      	rcall light_columns
-00008c d053                      	rcall light_columns
-00008d d052                      	rcall light_columns
-00008e d051                      	rcall light_columns
-00008f 9840                      	cbi PORTC, 0
+000085 9109                      	ld rTemp, Y+
+000086 d04f                      	rcall reset_columns
+000087 9a40                      	sbi PORTC, 0
+000088 d056                      	rcall light_columns
+000089 d055                      	rcall light_columns
+00008a d054                      	rcall light_columns
+00008b d053                      	rcall light_columns
+00008c d052                      	rcall light_columns
+00008d d051                      	rcall light_columns
+00008e 9840                      	cbi PORTC, 0
                                  	
                                  	//Matrix 2
-000090 9109                      	ld rTemp, Y+
-000091 d045                      	rcall reset_columns
-000092 9a41                      	sbi PORTC, 1
-000093 d04c                      	rcall light_columns
-000094 d04b                      	rcall light_columns
-000095 d04a                      	rcall light_columns
-000096 d049                      	rcall light_columns
-000097 d048                      	rcall light_columns
-000098 d047                      	rcall light_columns
-000099 9841                      	cbi PORTC, 1
+00008f 9109                      	ld rTemp, Y+
+000090 d045                      	rcall reset_columns
+000091 9a41                      	sbi PORTC, 1
+000092 d04c                      	rcall light_columns
+000093 d04b                      	rcall light_columns
+000094 d04a                      	rcall light_columns
+000095 d049                      	rcall light_columns
+000096 d048                      	rcall light_columns
+000097 d047                      	rcall light_columns
+000098 9841                      	cbi PORTC, 1
                                  
                                  	//Matrix 3
-00009a 9109                      	ld rTemp, Y+
-00009b d03b                      	rcall reset_columns
-00009c 9a42                      	sbi PORTC, 2
-00009d d042                      	rcall light_columns
-00009e d041                      	rcall light_columns
-00009f d040                      	rcall light_columns
-0000a0 d03f                      	rcall light_columns
-0000a1 d03e                      	rcall light_columns
-0000a2 d03d                      	rcall light_columns
-0000a3 9842                      	cbi PORTC, 2
+000099 9109                      	ld rTemp, Y+
+00009a d03b                      	rcall reset_columns
+00009b 9a42                      	sbi PORTC, 2
+00009c d042                      	rcall light_columns
+00009d d041                      	rcall light_columns
+00009e d040                      	rcall light_columns
+00009f d03f                      	rcall light_columns
+0000a0 d03e                      	rcall light_columns
+0000a1 d03d                      	rcall light_columns
+0000a2 9842                      	cbi PORTC, 2
                                  
                                  	//Matrix 4
-0000a4 9109                      	ld rTemp, Y+
-0000a5 d031                      	rcall reset_columns
-0000a6 9a43                      	sbi PORTC, 3
-0000a7 d038                      	rcall light_columns
-0000a8 d037                      	rcall light_columns
-0000a9 d036                      	rcall light_columns
-0000aa d035                      	rcall light_columns
-0000ab d034                      	rcall light_columns
-0000ac d033                      	rcall light_columns
-0000ad 9843                      	cbi PORTC, 3
+0000a3 9109                      	ld rTemp, Y+
+0000a4 d031                      	rcall reset_columns
+0000a5 9a43                      	sbi PORTC, 3
+0000a6 d038                      	rcall light_columns
+0000a7 d037                      	rcall light_columns
+0000a8 d036                      	rcall light_columns
+0000a9 d035                      	rcall light_columns
+0000aa d034                      	rcall light_columns
+0000ab d033                      	rcall light_columns
+0000ac 9843                      	cbi PORTC, 3
                                  
                                  	//Matrix 5
-0000ae 9109                      	ld rTemp, Y+
-0000af d027                      	rcall reset_columns
-0000b0 9a5a                      	sbi PORTD, 2
-0000b1 d02e                      	rcall light_columns
-0000b2 d02d                      	rcall light_columns
-0000b3 d02c                      	rcall light_columns
-0000b4 d02b                      	rcall light_columns
-0000b5 d02a                      	rcall light_columns
-0000b6 d029                      	rcall light_columns
-0000b7 985a                      	cbi PORTD, 2
+0000ad 9109                      	ld rTemp, Y+
+0000ae d027                      	rcall reset_columns
+0000af 9a5a                      	sbi PORTD, 2
+0000b0 d02e                      	rcall light_columns
+0000b1 d02d                      	rcall light_columns
+0000b2 d02c                      	rcall light_columns
+0000b3 d02b                      	rcall light_columns
+0000b4 d02a                      	rcall light_columns
+0000b5 d029                      	rcall light_columns
+0000b6 985a                      	cbi PORTD, 2
                                  
                                  	//Matrix 6
-0000b8 9109                      	ld rTemp, Y+
-0000b9 d01d                      	rcall reset_columns
-0000ba 9a5b                      	sbi PORTD, 3
-0000bb d024                      	rcall light_columns
-0000bc d023                      	rcall light_columns
-0000bd d022                      	rcall light_columns
-0000be d021                      	rcall light_columns
-0000bf d020                      	rcall light_columns
-0000c0 d01f                      	rcall light_columns
-0000c1 985b                      	cbi PORTD, 3
+0000b7 9109                      	ld rTemp, Y+
+0000b8 d01d                      	rcall reset_columns
+0000b9 9a5b                      	sbi PORTD, 3
+0000ba d024                      	rcall light_columns
+0000bb d023                      	rcall light_columns
+0000bc d022                      	rcall light_columns
+0000bd d021                      	rcall light_columns
+0000be d020                      	rcall light_columns
+0000bf d01f                      	rcall light_columns
+0000c0 985b                      	cbi PORTD, 3
                                  
                                  	//Matrix 7
-0000c2 9109                      	ld rTemp, Y+
-0000c3 d013                      	rcall reset_columns
-0000c4 9a5c                      	sbi PORTD, 4
-0000c5 d01a                      	rcall light_columns
-0000c6 d019                      	rcall light_columns
-0000c7 d018                      	rcall light_columns
-0000c8 d017                      	rcall light_columns
-0000c9 d016                      	rcall light_columns
-0000ca d015                      	rcall light_columns
-0000cb 985c                      	cbi PORTD, 4
+0000c1 9109                      	ld rTemp, Y+
+0000c2 d013                      	rcall reset_columns
+0000c3 9a5c                      	sbi PORTD, 4
+0000c4 d01a                      	rcall light_columns
+0000c5 d019                      	rcall light_columns
+0000c6 d018                      	rcall light_columns
+0000c7 d017                      	rcall light_columns
+0000c8 d016                      	rcall light_columns
+0000c9 d015                      	rcall light_columns
+0000ca 985c                      	cbi PORTD, 4
                                  
                                  	//Matrix 8
-0000cc 8108                      	ld rTemp, Y
-0000cd d009                      	rcall reset_columns
-0000ce 9a5d                      	sbi PORTD, 5
-0000cf d010                      	rcall light_columns
-0000d0 d00f                      	rcall light_columns
-0000d1 d00e                      	rcall light_columns
-0000d2 d00d                      	rcall light_columns
-0000d3 d00c                      	rcall light_columns
-0000d4 d00b                      	rcall light_columns
-0000d5 985d                      	cbi PORTD, 5
+0000cb 8108                      	ld rTemp, Y
+0000cc d009                      	rcall reset_columns
+0000cd 9a5d                      	sbi PORTD, 5
+0000ce d010                      	rcall light_columns
+0000cf d00f                      	rcall light_columns
+0000d0 d00e                      	rcall light_columns
+0000d1 d00d                      	rcall light_columns
+0000d2 d00c                      	rcall light_columns
+0000d3 d00b                      	rcall light_columns
+0000d4 985d                      	cbi PORTD, 5
                                  
-0000d6 9508                      	ret
+0000d5 9508                      	ret
                                  
                                  reset_columns:
                                  
-0000d7 985e                      	cbi PORTD, 6
-0000d8 985f                      	cbi PORTD, 7
-0000d9 9828                      	cbi PORTB, 0
-0000da 9829                      	cbi PORTB, 1
-0000db 982a                      	cbi PORTB, 2
-0000dc 982b                      	cbi PORTB, 3
-0000dd 982c                      	cbi PORTB, 4
-0000de 982d                      	cbi PORTB, 5
-0000df 9508                      	ret
+0000d6 985e                      	cbi PORTD, 6
+0000d7 985f                      	cbi PORTD, 7
+0000d8 9828                      	cbi PORTB, 0
+0000d9 9829                      	cbi PORTB, 1
+0000da 982a                      	cbi PORTB, 2
+0000db 982b                      	cbi PORTB, 3
+0000dc 982c                      	cbi PORTB, 4
+0000dd 982d                      	cbi PORTB, 5
+0000de 9508                      	ret
                                  
                                  light_columns:
                                  
                                  	//Light 1
-0000e0 fd00                      	sbrc rTemp, 0
-0000e1 9a5e                      	sbi PORTD, 6
-0000e2 ff00                      	sbrs rTemp, 0
-0000e3 985e                      	cbi PORTD, 6
+0000df fd00                      	sbrc rTemp, 0
+0000e0 9a5e                      	sbi PORTD, 6
+0000e1 ff00                      	sbrs rTemp, 0
+0000e2 985e                      	cbi PORTD, 6
                                  
                                  	//Light 2 if set.
-0000e4 fd01                      	sbrc rTemp, 1
-0000e5 9a5f                      	sbi PORTD, 7
-0000e6 ff01                      	sbrs rTemp, 1
-0000e7 985f                      	cbi PORTD, 7
+0000e3 fd01                      	sbrc rTemp, 1
+0000e4 9a5f                      	sbi PORTD, 7
+0000e5 ff01                      	sbrs rTemp, 1
+0000e6 985f                      	cbi PORTD, 7
                                  
                                  	//Light 3 if set.
-0000e8 fd02                      	sbrc rTemp, 2
-0000e9 9a28                      	sbi PORTB, 0
-0000ea ff02                      	sbrs rTemp, 2
-0000eb 9828                      	cbi PORTB, 0
+0000e7 fd02                      	sbrc rTemp, 2
+0000e8 9a28                      	sbi PORTB, 0
+0000e9 ff02                      	sbrs rTemp, 2
+0000ea 9828                      	cbi PORTB, 0
                                  
                                  	//Light 4 if set.
-0000ec fd03                      	sbrc rTemp, 3
-0000ed 9a29                      	sbi PORTB, 1
-0000ee ff03                      	sbrs rTemp, 3
-0000ef 9829                      	cbi PORTB, 1
+0000eb fd03                      	sbrc rTemp, 3
+0000ec 9a29                      	sbi PORTB, 1
+0000ed ff03                      	sbrs rTemp, 3
+0000ee 9829                      	cbi PORTB, 1
                                  
                                  	//Light 5 if set.
-0000f0 fd04                      	sbrc rTemp, 4
-0000f1 9a2a                      	sbi PORTB, 2
-0000f2 ff04                      	sbrs rTemp, 4
-0000f3 982a                      	cbi PORTB, 2
+0000ef fd04                      	sbrc rTemp, 4
+0000f0 9a2a                      	sbi PORTB, 2
+0000f1 ff04                      	sbrs rTemp, 4
+0000f2 982a                      	cbi PORTB, 2
                                  
                                  	//Light 6 if set.
-0000f4 fd05                      	sbrc rTemp, 5
-0000f5 9a2b                      	sbi PORTB, 3
-0000f6 ff05                      	sbrs rTemp, 5
-0000f7 982b                      	cbi PORTB, 3
+0000f3 fd05                      	sbrc rTemp, 5
+0000f4 9a2b                      	sbi PORTB, 3
+0000f5 ff05                      	sbrs rTemp, 5
+0000f6 982b                      	cbi PORTB, 3
                                  
                                  	//Light 7 if set.
-0000f8 fd06                      	sbrc rTemp, 6
-0000f9 9a2c                      	sbi PORTB, 4
-0000fa ff06                      	sbrs rTemp, 6
-0000fb 982c                      	cbi PORTB, 4
+0000f7 fd06                      	sbrc rTemp, 6
+0000f8 9a2c                      	sbi PORTB, 4
+0000f9 ff06                      	sbrs rTemp, 6
+0000fa 982c                      	cbi PORTB, 4
                                  
                                  	//Light 8 if set.
-0000fc fd07                      	sbrc rTemp, 7
-0000fd 9a2d                      	sbi PORTB, 5
-0000fe ff07                      	sbrs rTemp, 7
-0000ff 982d                      	cbi PORTB, 5
+0000fb fd07                      	sbrc rTemp, 7
+0000fc 9a2d                      	sbi PORTB, 5
+0000fd ff07                      	sbrs rTemp, 7
+0000fe 982d                      	cbi PORTB, 5
                                  
-000100 9508                      	ret
+0000ff 9508                      	ret
                                  
                                  
                                  
@@ -1425,7 +1423,7 @@ fmulsu:   0 icall :   0 ijmp  :   0 in    :   1 inc   :   9 jmp   :   0
 ld    :  16 ldd   :   0 ldi   :  24 lds   :   0 lpm   :   0 lsl   :   0 
 lsr   :   0 mov   :   0 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
 neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :   8 pop   :   2 
-push  :   2 rcall :  58 ret   :   3 reti  :   2 rjmp  :   4 rol   :   0 
+push  :   2 rcall :  57 ret   :   3 reti  :   2 rjmp  :   4 rol   :   0 
 ror   :   0 sbc   :   0 sbci  :   0 sbi   :  16 sbic  :   0 sbis  :   0 
 sbiw  :   0 sbr   :   0 sbrc  :   8 sbrs  :   8 sec   :   0 seh   :   0 
 sei   :   1 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
@@ -1436,7 +1434,7 @@ Instructions used: 21 out of 113 (18.6%)
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x000202    414      0    414   32768   1.3%
+[.cseg] 0x000000 0x000200    412      0    412   32768   1.3%
 [.dseg] 0x000100 0x000108      0      8      8    2048   0.4%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 
