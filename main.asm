@@ -7,6 +7,8 @@
 
 .DEF rTemp = r16
 .DEF rDirection = r23
+.DEF rJoyX = r20
+.DEF rJoyY = r21
 
 .DEF rTime = r18
 .DEF rCurrentTime = r19
@@ -56,6 +58,15 @@ reset:
 	ldi rTemp, 0b00111111
 	out DDRB, rTemp
 
+	// Ledjoy A/D setup
+	lds rTemp, ADMUX
+	ori rTemp, 0b01000000
+	sts ADMUX, rTemp
+
+	lds rTemp, ADCSRA
+	ori rTemp, 0b10000111
+	sts ADCSRA, rTemp
+
 	//Make a pointer to Matrix and store it in Y.
 	ldi YH, HIGH(matrix)
 	ldi YL, LOW(matrix)
@@ -97,7 +108,7 @@ timer0:
 		in rTemp, SREG
 		push rTemp
 
-		//Execute code
+		/*//Execute code
 		ldi ZH, HIGH(matrix)
 		ldi ZL, LOW(matrix)
 
@@ -131,7 +142,7 @@ timer0:
 
 		ld rTemp, Z
 		inc rTemp
-		st Z+, rTemp
+		st Z+, rTemp*/
 
 		//Pop SREG and rTemp from stack.
 		pop rTemp
@@ -140,8 +151,44 @@ timer0:
 		reti
 
 main:
+	rcall input_x
+	rcall input_y
 	rcall screen_update
 	rjmp main
+
+input_y:
+	// Y input
+	lds rTemp, ADMUX
+	cbr rTemp, 1
+	ori rTemp, 0b00100100
+	sts ADMUX, rTemp
+
+	lds rTemp, ADCSRA
+	ori rTemp, (1<<ADSC)
+	sts ADCSRA, rTemp
+
+	ad_doneY: 
+		lds rTemp, ADCSRA
+		sbrc rTemp, 6
+		jmp ad_doneY
+	lds rJoyY, ADCH
+	ret
+
+input_x:
+	lds rTemp, ADMUX
+	ori rTemp, 0b00100101
+	sts ADMUX, rTemp
+
+	lds rTemp, ADCSRA
+	ori rTemp, (1<<ADSC)
+	sts ADCSRA, rTemp
+
+	ad_doneX: 
+		lds rTemp, ADCSRA
+		sbrc rTemp, 6
+		jmp ad_doneX
+	lds rJoyX, ADCH
+	ret
 
 screen_update:
 	//Updates the screen with data from the 8 byte Matrix.
@@ -155,6 +202,7 @@ screen_update:
 
 	//Matrix 1
 	ld rTemp, Y+
+	st Y, rJoyY
 	rcall reset_columns
 	sbi PORTC, 0
 	rcall light_columns
@@ -168,6 +216,7 @@ screen_update:
 	//Matrix 2
 	ld rTemp, Y+
 	rcall reset_columns
+	st Y, rJoyX
 	sbi PORTC, 1
 	rcall light_columns
 	rcall light_columns
