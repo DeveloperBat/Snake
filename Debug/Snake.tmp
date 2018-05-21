@@ -22,19 +22,31 @@
   <FILE>Snake.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <matrix><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>22</LINE></matrix>
-  <reset><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>32</LINE></reset>
+  <matrix><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>27</LINE></matrix>
+  <reset><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>37</LINE></reset>
   <timer0><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>98</LINE></timer0>
-  <main><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>132</LINE></main>
+  <random><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>400</LINE></random>
+  <create_apple><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>415</LINE></create_apple>
+  <main><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>154</LINE></main>
   <timer0_continue><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>108</LINE></timer0_continue>
-  <create_apple><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>122</LINE></create_apple>
-  <input_x><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>157</LINE></input_x>
-  <input_y><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>139</LINE></input_y>
-  <random_generate><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>345</LINE></random_generate>
-  <screen_update><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>173</LINE></screen_update>
-  <ad_doneY><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>150</LINE></ad_doneY>
-  <ad_doneX><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>166</LINE></ad_doneX>
-  <reset_columns><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>281</LINE></reset_columns>
-  <light_columns><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>293</LINE></light_columns>
+  <game_update><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>119</LINE></game_update>
+  <apple_update><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>124</LINE></apple_update>
+  <end_game_update><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>147</LINE></end_game_update>
+  <cp_apple_y><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>134</LINE></cp_apple_y>
+  <insert_apple><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>141</LINE></insert_apple>
+  <input_x><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>180</LINE></input_x>
+  <input_y><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>162</LINE></input_y>
+  <move_direction><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>196</LINE></move_direction>
+  <screen_update><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>228</LINE></screen_update>
+  <ad_doneY><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>173</LINE></ad_doneY>
+  <ad_doneX><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>189</LINE></ad_doneX>
+  <y_greater><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>212</LINE></y_greater>
+  <y_lower><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>216</LINE></y_lower>
+  <x_greater><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>220</LINE></x_greater>
+  <x_lower><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>224</LINE></x_lower>
+  <reset_columns><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>336</LINE></reset_columns>
+  <light_columns><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>348</LINE></light_columns>
+  <convert_apple_x><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>434</LINE></convert_apple_x>
+  <set_apple_x><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>442</LINE></set_apple_x>
  </LABELS>
 </ASSEMBLER_INFO>

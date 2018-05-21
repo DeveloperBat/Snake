@@ -5,18 +5,21 @@
 ; Author : Hampus Österlund, Rickardh Forslund
 ;
 
-.DEF rApple = r2
+.DEF rRandomX = r2
+.DEF rRandomY = r3
+.DEF rAppleX = r4
+.DEF rAppleY = r5
+
 .DEF rTemp = r16
-.DEF rRandomX = r17
-.DEF rRandomY = r18
-.DEF rTime = r19
-.DEF rJoyX = r20
-.DEF rJoyY = r21
-.DEF rCurrentTime = r22
-.DEF rDirection = r23
+.DEF rTemp2 = r17
+.DEF rJoyX = r18
+.DEF rJoyY = r19
+.DEF rTime = r20
+.DEF rCurrentTime = r21
+.DEF rDirection = r22
 
 //Time for timer0
-.EQU STARTTIME = 3
+.EQU STARTTIME = 10
 .EQU DEADZONEHIGH = 0x89
 .EQU DEADZONELOW = 0x75
 
@@ -75,25 +78,20 @@ reset:
 	ldi YH, HIGH(matrix)
 	ldi YL, LOW(matrix)
 
-	//Save some good stuff to Matrix
-	ldi rTemp, 0b00000000
+	//Clear the matrix.
+	clr rTemp
 	st Y+, rTemp
-	ldi rTemp, 0b00000000
 	st Y+, rTemp
-	ldi rTemp, 0b00000000
 	st Y+, rTemp
-	ldi rTemp, 0b00000000
 	st Y+, rTemp
-	ldi rTemp, 0b00000000
 	st Y+, rTemp
-	ldi rTemp, 0b00000000
 	st Y+, rTemp
-	ldi rTemp, 0b00000000
 	st Y+, rTemp
-	ldi rTemp, 0b00000000
 	st Y, rTemp
-	
-	//Initialize random byte to rRandom
+
+	//Initiate stuff.
+	rcall random
+	rcall create_apple
 
 	rjmp main
 
@@ -116,15 +114,37 @@ timer0:
 		push rTemp
 
 		//GAME LOGIC HERE
+		//USE Z REGISTER AS POINTER TO MATRIX, IF USED IN GAME UPDATE TO PREVENT ERRORS.
 
-		//Initiating Z-Pointer to matrix.
-		ldi ZH, HIGH(matrix)
-		ldi ZL, LOW(matrix)
+		game_update:
+			rcall apple_update
+			//rrcall snake_update
+			rjmp end_game_update
 
-		create_apple:
-		//Creates a position for the apple.
+		apple_update:
+			//Load pointer to matrix.
+			ldi ZH, HIGH(matrix)
+			ldi ZL, LOW(matrix)
 
+			//rTemp2 = i
+			clc
+			clr rTemp2
 
+			//Compare if this is the row the apple should be in.
+			cp_apple_y:
+				cp rTemp2, rAppleY
+				breq insert_apple
+				inc rTemp2
+				ld rTemp, Z+
+				rjmp cp_apple_y
+
+				insert_apple:
+				//Insert apple into the matrix.
+				st Z, rAppleX
+
+			ret
+
+		end_game_update:
 		//Pop SREG and rTemp from stack and restore them.
 		pop rTemp
 		out SREG, rTemp
@@ -134,12 +154,8 @@ timer0:
 main:
 	rcall input_x
 	rcall input_y
-<<<<<<< HEAD
-=======
+	rcall random
 	rcall move_direction
-	rcall screen_update
->>>>>>> 88a6e77905c666b3b128dbf789b1e07c9f53fc1f
-	rcall random_generate
 	rcall screen_update
 	rjmp main
 
@@ -157,7 +173,7 @@ input_y:
 	ad_doneY: 
 		lds rTemp, ADCSRA
 		sbrc rTemp, 6
-		jmp ad_doneY
+		rjmp ad_doneY
 	lds rJoyY, ADCH
 	ret
 
@@ -173,7 +189,7 @@ input_x:
 	ad_doneX: 
 		lds rTemp, ADCSRA
 		sbrc rTemp, 6
-		jmp ad_doneX
+		rjmp ad_doneX
 	lds rJoyX, ADCH
 	ret
 
@@ -213,7 +229,7 @@ screen_update:
 	//Updates the screen with data from the 8 byte Matrix.
 	//
 	//The instructions: Resets columns, activates row, activates columns and finally deactivates the row.
-	//Calling light columns several times to increase the time they get energized. (Increased light level)
+	//rcalling light columns several times to increase the time they get energized. (Increased light level)
 
 	//Reset pointer to Matrix.
 	ldi YH, HIGH(matrix)
@@ -381,13 +397,50 @@ light_columns:
 
 	ret
 
-random_generate:
+random:
 	//Generate a random X value.
 	add rRandomX, rJoyX
-	subi rRandomX, -5
+	clr rTemp
+	subi rTemp, -5
+	sub rRandomX, rTemp
 
 	//Generate a random Y value.
 	add rRandomY, rJoyY
-	subi rRandomY, -5
+	clr rTemp
+	subi rTemp, -5
+	sub rRandomY, rTemp
 
 	ret
+
+create_apple:
+		//Create an apple for the matrix.
+
+		//Copy random values to the new apple position.
+		mov rAppleX, rRandomX
+		mov rAppleY, rRandomY
+
+		//Remove all bits except the 3 lsb. (least significant bits)
+		ldi rTemp, 0b00000111
+		and rAppleX, rTemp
+		and rAppleY, rTemp
+
+
+		//Get the LED that will represent the apple.
+		//rTemp = Column, rTemp2 = i
+		clc
+		ldi rTemp, 0b00000001
+		clr rTemp2
+
+		convert_apple_x:
+			//Convert lsb to matrix column data.
+			cp rTemp2, rAppleX
+			breq set_apple_x
+			lsl rTemp
+			inc rTemp2
+			rjmp convert_apple_x
+
+			set_apple_x:
+				clr rAppleX
+				add rAppleX, rTemp
+
+		ret

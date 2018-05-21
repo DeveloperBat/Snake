@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.7  C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Fri May 18 14:34:06 2018
+AVRASM ver. 2.2.7  C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Sun May 20 16:53:04 2018
 
 
 EQU  SIGNATURE_000 0000001e
@@ -695,27 +695,43 @@ EQU  ACIaddr      0000002e
 EQU  TWIaddr      00000030
 EQU  SPMRaddr     00000032
 EQU  INT_VECTORS_SIZE 00000034
-DEF  rApple       r2
+DEF  rRandomX     r2
+DEF  rRandomY     r3
+DEF  rAppleX      r4
+DEF  rAppleY      r5
 DEF  rTemp        r16
-DEF  rRandomX     r17
-DEF  rRandomY     r18
-DEF  rTime        r19
-DEF  rJoyX        r20
-DEF  rJoyY        r21
-DEF  rCurrentTime r22
-DEF  rDirection   r23
-EQU  STARTTIME    00000003
+DEF  rTemp2       r17
+DEF  rJoyX        r18
+DEF  rJoyY        r19
+DEF  rTime        r20
+DEF  rCurrentTime r21
+DEF  rDirection   r22
+EQU  STARTTIME    0000000a
+EQU  DEADZONEHIGH 00000089
+EQU  DEADZONELOW  00000075
 DSEG matrix       00000100
 CSEG reset        00000034
-CSEG timer0       00000065
-CSEG main         00000073
-CSEG timer0_continue 00000069
-CSEG create_apple 0000006f
-CSEG input_x      0000008b
-CSEG input_y      00000078
-CSEG random_generate 0000011a
-CSEG screen_update 0000009d
-CSEG ad_doneY     00000083
-CSEG ad_doneX     00000095
-CSEG reset_columns 000000f0
-CSEG light_columns 000000f9
+CSEG timer0       00000060
+CSEG random       00000134
+CSEG create_apple 0000013d
+CSEG main         00000079
+CSEG timer0_continue 00000064
+CSEG game_update  00000068
+CSEG apple_update 0000006a
+CSEG end_game_update 00000075
+CSEG cp_apple_y   0000006e
+CSEG insert_apple 00000073
+CSEG input_x      00000091
+CSEG input_y      0000007f
+CSEG move_direction 000000a2
+CSEG screen_update 000000b7
+CSEG ad_doneY     0000008a
+CSEG ad_doneX     0000009b
+CSEG y_greater    000000ab
+CSEG y_lower      000000ae
+CSEG x_greater    000000b1
+CSEG x_lower      000000b4
+CSEG reset_columns 0000010a
+CSEG light_columns 00000113
+CSEG convert_apple_x 00000145
+CSEG set_apple_x  0000014a
