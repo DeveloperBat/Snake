@@ -17,6 +17,8 @@
 .DEF rTime = r20
 .DEF rCurrentTime = r21
 .DEF rDirection = r22
+.DEF rLength = r23
+.DEF rTemp3 = r24
 
 //Time for timer0
 .EQU STARTTIME = 10
@@ -25,6 +27,7 @@
 
 .DSEG
 matrix:	.BYTE 8
+snake: .BYTE 15
 
 .CSEG
 //Interrupt vector table.
@@ -156,6 +159,7 @@ main:
 	rcall input_y
 	rcall random
 	rcall move_direction
+	rcall snake_move
 	rcall screen_update
 	rjmp main
 
@@ -444,3 +448,113 @@ create_apple:
 				add rAppleX, rTemp
 
 		ret
+
+snake_move:
+	ldi YH, HIGH(snake)
+	ldi YL, LOW(snake)
+
+	snake_head:
+		ld rTemp, Y
+		lds rTemp2, rTemp
+
+		cpi rDirection, 0x1
+		breq snake_move_up
+
+		cpi rDirection, 0x2
+		breq snake_move_down
+
+		cpi rDirection, 0x3
+		breq snake_move_left
+
+		cpi rDirection, 0x4
+		breq snake_move_right
+
+	snake_head_moved:
+		
+	
+	ldi rTemp2, 0b00000000
+	ld rTemp, Y+
+
+	snake_loop:
+		ld rTemp3, Y
+		sts Y+, rTemp
+		ld rTemp, rTemp3
+		
+		inc rTemp2
+		cpi rTemp2, rLength
+		brlo snake_loop
+
+	ret
+	
+
+snake_move_up:
+	lsr rTemp
+	lsr rTemp
+	lsr rTemp
+	lsr rTemp
+	
+	cpi rTemp, 0b00000000
+	brne up_no_teleport
+		ldi rTemp, 0b00001000
+	up_no_teleport:
+	dec rTemp
+	lsl rTemp
+	lsl rTemp
+	lsl rTemp
+	lsl rTemp
+
+	cbr rTemp2, 0b11110000
+	or rTemp2, rTemp
+	st Y, rTemp2
+
+	rjmp snake_head_moved
+
+snake_move_down:
+	lsr rTemp
+	lsr rTemp
+	lsr rTemp
+	lsr rTemp
+
+	cpi rTemp, 0b00000111
+	brne down_no_teleport
+		ldi rTemp, 0b11111111
+	down_no_teleport:
+	inc rTemp
+	lsl rTemp
+	lsl rTemp
+	lsl rTemp
+	lsl rTemp
+
+	cbr rTemp2, 0b11110000
+	or rTemp2, rTemp
+	st Y, rTemp2
+
+	rjmp snake_head_moved
+
+snake_move_left:
+	cbr rTemp, 0b11110000
+	cpi rTemp, 0b00000000
+	brne left_no_teleport
+		ldi rTemp, 0b00001000
+	left_no_teleport:
+	dec rTemp
+
+	cbr rTemp2, 0b00001111
+	or rTemp2, rTemp
+	st Y, rTemp2
+
+	rjmp snake_head_moved
+
+snake_move_right:
+	cbr rTemp, 0b11110000
+	cpi rTemp, 0b00000111
+	brne left_no_teleport
+		ldi rTemp, 0b11111111
+	left_no_teleport:
+	inc rTemp
+
+	cbr rTemp2, 0b00001111
+	or rTemp2, rTemp
+	st Y, rTemp2
+
+	rjmp snake_head_moved
