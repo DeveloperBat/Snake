@@ -1,5 +1,9 @@
 
+<<<<<<< HEAD
 AVRASM ver. 2.2.7  C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Tue May 22 13:46:36 2018
+=======
+AVRASM ver. 2.2.7  \\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm Tue May 22 13:47:56 2018
+>>>>>>> 598fbe08d8f6aa6876de98a89df2e4ce904a9ba3
 
 
 EQU  SIGNATURE_000 0000001e
@@ -714,6 +718,7 @@ DSEG matrix       00000100
 DSEG snake        00000108
 CSEG reset        00000034
 CSEG timer0       00000058
+<<<<<<< HEAD
 CSEG clear_matrix 00000161
 CSEG snake_create 000001dc
 CSEG random       00000125
@@ -762,3 +767,48 @@ CSEG snake_row_point_finder 000001bb
 CSEG point_not_row 000001d2
 CSEG decrease_loop 000001c8
 CSEG end_decrease_loop 000001cf
+=======
+CSEG clear_matrix 00000149
+CSEG snake_create 000001c5
+CSEG random       0000011f
+CSEG apple_create 00000125
+CSEG main         00000068
+CSEG timer0_continue 0000005c
+CSEG game_update  00000060
+CSEG apple_update 00000129
+CSEG snake_move   00000155
+CSEG snake_render 0000019d
+CSEG input_x      00000080
+CSEG input_y      0000006e
+CSEG move_direction 00000091
+CSEG screen_update 000000a2
+CSEG ad_doneY     00000079
+CSEG ad_doneX     0000008a
+CSEG y_greater    0000009a
+CSEG y_lower      0000009c
+CSEG x_greater    0000009e
+CSEG x_lower      000000a0
+CSEG reset_columns 000000f5
+CSEG light_columns 000000fe
+CSEG apple_Y      0000012b
+CSEG apple_convert_Y 00000136
+CSEG apple_X      0000013b
+CSEG apple_convert_X 0000013f
+CSEG apple_set    00000145
+CSEG snake_head   00000157
+CSEG snake_move_left 00000194
+CSEG snake_move_right 00000171
+CSEG snake_move_up 0000017a
+CSEG snake_move_down 00000187
+CSEG snake_head_moved 00000167
+CSEG snake_loop   0000016a
+CSEG right_no_teleport 00000175
+CSEG up_no_teleport 0000017d
+CSEG down_no_teleport 0000018a
+CSEG left_no_teleport 00000198
+CSEG render_loop  000001a0
+CSEG snake_row_point_finder 000001a3
+CSEG point_not_row 000001bb
+CSEG decrease_loop 000001b0
+CSEG end_decrease_loop 000001b8
+>>>>>>> 598fbe08d8f6aa6876de98a89df2e4ce904a9ba3

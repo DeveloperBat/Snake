@@ -79,7 +79,7 @@ reset:
 	sts ADCSRA, rTemp
 
 	//Initiate stuff.
-	ldi rDirection, 0x1
+	ldi rDirection, 0b00000100
 	rcall clear_matrix
 	rcall snake_create
 	rcall random
@@ -181,19 +181,19 @@ move_direction:
 
 	// Joystick up
 	y_greater:
-		lds rDirection, 0b00000001
+		ldi rDirection, 0b00000001
 		ret
 	// Joystick down
 	y_lower:
-		lds rDirection, 0b00000010
+		ldi rDirection, 0b00000010
 		ret
 	// Joystick left
 	x_greater:
-		lds rDirection, 0b00000011
+		ldi rDirection, 0b00000011
 		ret
 	// Joystick right
 	x_lower:
-		lds rDirection, 0b00000100
+		ldi rDirection, 0b00000100
 		ret
 
 screen_update:
@@ -627,17 +627,18 @@ snake_render:
 			brne point_not_row
 
 			mov rTemp, rTemp3
-			cbr rTemp, 0b11110000
+			cbr rTemp, 0b11111000
 			ldi rTemp3, 0b00000001
 			
 			decrease_loop:
 				cpi rTemp, 0b00000000
 				breq end_decrease_loop
 				nop
+				clc
 				dec rTemp
 				lsl rTemp3
-				jmp decrease_loop
-
+				rjmp decrease_loop
+				nop
 			end_decrease_loop:
 			ld rTemp, X
 			or rTemp, rTemp3
