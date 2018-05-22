@@ -5,10 +5,9 @@
 ; Author : Hampus Österlund, Rickardh Forslund
 ;
 
-.DEF rRandomX = r2
-.DEF rRandomY = r3
-.DEF rAppleX = r4
-.DEF rAppleY = r5
+.DEF rRandomXY = r2
+.DEF rAppleXY = r3
+.DEF rHead = r4
 
 .DEF rTemp = r16
 .DEF rTemp2 = r17
@@ -20,7 +19,7 @@
 .DEF rLength = r23
 .DEF rTemp3 = r24
 .DEF rTemp4 = r25
-.DEF rHead = r26
+
 
 //Time for timer0
 .EQU STARTTIME = 10
@@ -83,7 +82,7 @@ reset:
 	rcall clear_matrix
 	rcall snake_create
 	rcall random
-	rcall create_apple
+	rcall apple_create
 
 	rjmp main
 
@@ -114,34 +113,6 @@ timer0:
 			rcall apple_update
 			rcall snake_move
 			rcall snake_render
-			rjmp end_game_update
-
-		apple_update:
-			//Load pointer to matrix.
-			ldi ZH, HIGH(matrix)
-			ldi ZL, LOW(matrix)
-
-			//rTemp2 = i
-			clc
-			clr rTemp2
-
-			//Compare if this is the row the apple should be in.
-			cp_apple_y:
-				cp rTemp2, rAppleY
-				breq insert_apple
-				inc rTemp2
-				ld rTemp, Z+
-				rjmp cp_apple_y
-
-				insert_apple:
-				//Insert apple into the matrix.
-				ld rTemp, Z
-				or rTemp, rAppleX
-				st Z, rTemp
-
-			ret
-
-		end_game_update:
 		//Pop SREG and rTemp from stack and restore them.
 		pop rTemp
 		out SREG, rTemp
@@ -396,49 +367,73 @@ light_columns:
 
 random:
 	//Generate a random X value.
-	add rRandomX, rJoyX
+	add rRandomXY, rJoyX
+	add rRandomXY, rJoyY
 	clr rTemp
 	subi rTemp, -5
-	sub rRandomX, rTemp
-
-	//Generate a random Y value.
-	add rRandomY, rJoyY
-	clr rTemp
-	subi rTemp, -5
-	sub rRandomY, rTemp
+	sub rRandomXY, rTemp
 
 	ret
 
-create_apple:
+apple_create:
 	//Create an apple for the matrix.
 
-	//Copy random values to the new apple position.
-	mov rAppleX, rRandomX
-	mov rAppleY, rRandomY
-
-	//Remove all bits except the 3 lsb. (least significant bits)
-	ldi rTemp, 0b00000111
-	and rAppleX, rTemp
-	and rAppleY, rTemp
-	//Get the LED that will represent the apple.
-	//rTemp = Column, rTemp2 = i
-	clc
-	ldi rTemp, 0b00000001
-	clr rTemp2
-
-	convert_apple_x:
-		//Convert lsb to matrix column data.
-		cp rTemp2, rAppleX
-		breq set_apple_x
-		lsl rTemp
-		inc rTemp2
-		rjmp convert_apple_x
-
-		set_apple_x:
-			clr rAppleX
-			add rAppleX, rTemp
+	//Copy random values to the new apple position and remove bits.
+	mov rAppleXY, rRandomXY
+	ldi rTemp, 0b01110111
+	and rAppleXY, rTemp
 
 	ret
+
+apple_update:
+	//Load pointer to matrix.
+	ldi ZH, HIGH(matrix)
+	ldi ZL, LOW(matrix)
+
+	apple_Y:
+		//rTemp = Row, rTemp2 = i
+		ldi rTemp, 0b01110000
+		and rTemp, rAppleXY
+		clr rTemp2
+
+		clc
+		lsr rTemp
+		clc
+		lsr rTemp
+		clc
+		lsr rTemp
+		clc
+		lsr rTemp
+
+		apple_convert_Y:
+			cp rTemp, rTemp2
+			breq apple_X
+			ld rTemp3, Z+
+			inc rTemp2
+			rjmp apple_convert_y
+
+	apple_X:
+	//rTemp = Row, rTemp2 = i, rTemp3 = Current column
+	ldi rTemp, 0b00000111
+	and rTemp, rAppleXY
+	clr rTemp2
+	ldi rTemp3, 0b00000001
+
+		apple_convert_X:
+			cp rTemp, rTemp2
+			breq apple_set
+			clc
+			lsl rTemp3
+			inc rTemp2
+			rjmp apple_convert_X
+
+	apple_set:
+	ld rTemp, Z
+	or rTemp, rTemp3
+	st Z, rTemp
+
+	ret
+
 
 clear_matrix:
 	//Clear the matrix.
@@ -487,7 +482,9 @@ snake_move:
 
 	snake_head_moved:
 	ldi rTemp2, 0b00000000
-	ld rTemp, Y+
+	ld rTemp, Y
+	st Y+, rHead
+
 	snake_loop:
 		ld rTemp3, Y
 		st Y+, rTemp
