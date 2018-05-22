@@ -20,6 +20,7 @@
 .DEF rLength = r23
 .DEF rTemp3 = r24
 .DEF rTemp4 = r25
+.DEF rHead = r26
 
 //Time for timer0
 .EQU STARTTIME = 10
@@ -77,23 +78,9 @@ reset:
 	ori rTemp, 0b10000111
 	sts ADCSRA, rTemp
 
-	//Make a pointer to Matrix and store it in Y.
-	ldi YH, HIGH(matrix)
-	ldi YL, LOW(matrix)
-
-	//Clear the matrix.
-	clr rTemp
-	st Y+, rTemp
-	st Y+, rTemp
-	st Y+, rTemp
-	st Y+, rTemp
-	st Y+, rTemp
-	st Y+, rTemp
-	st Y+, rTemp
-	st Y, rTemp
-
 	//Initiate stuff.
 	ldi rDirection, 0x1
+	rcall clear_matrix
 	rcall snake_create
 	rcall random
 	rcall create_apple
@@ -122,8 +109,11 @@ timer0:
 		//USE Z REGISTER AS POINTER TO MATRIX, IF USED IN GAME UPDATE TO PREVENT ERRORS.
 
 		game_update:
+			rcall clear_matrix
+			//rcall create_apple
 			rcall apple_update
 			rcall snake_move
+			rcall snake_render
 			rjmp end_game_update
 
 		apple_update:
@@ -145,7 +135,9 @@ timer0:
 
 				insert_apple:
 				//Insert apple into the matrix.
-				st Z, rAppleX
+				ld rTemp, Z
+				or rTemp, rAppleX
+				st Z, rTemp
 
 			ret
 
@@ -161,7 +153,6 @@ main:
 	rcall input_y
 	rcall random
 	rcall move_direction
-	rcall snake_render
 	rcall screen_update
 	rjmp main
 
@@ -216,19 +207,19 @@ move_direction:
 
 	// Joystick up
 	y_greater:
-		lds rDirection, 0x1
+		lds rDirection, 0b00000001
 		ret
 	// Joystick down
 	y_lower:
-		lds rDirection, 0x2
+		lds rDirection, 0b00000010
 		ret
 	// Joystick left
 	x_greater:
-		lds rDirection, 0x3
+		lds rDirection, 0b00000011
 		ret
 	// Joystick right
 	x_lower:
-		lds rDirection, 0x4
+		lds rDirection, 0b00000100
 		ret
 
 screen_update:
@@ -419,37 +410,53 @@ random:
 	ret
 
 create_apple:
-		//Create an apple for the matrix.
+	//Create an apple for the matrix.
 
-		//Copy random values to the new apple position.
-		mov rAppleX, rRandomX
-		mov rAppleY, rRandomY
+	//Copy random values to the new apple position.
+	mov rAppleX, rRandomX
+	mov rAppleY, rRandomY
 
-		//Remove all bits except the 3 lsb. (least significant bits)
-		ldi rTemp, 0b00000111
-		and rAppleX, rTemp
-		and rAppleY, rTemp
+	//Remove all bits except the 3 lsb. (least significant bits)
+	ldi rTemp, 0b00000111
+	and rAppleX, rTemp
+	and rAppleY, rTemp
+	//Get the LED that will represent the apple.
+	//rTemp = Column, rTemp2 = i
+	clc
+	ldi rTemp, 0b00000001
+	clr rTemp2
 
+	convert_apple_x:
+		//Convert lsb to matrix column data.
+		cp rTemp2, rAppleX
+		breq set_apple_x
+		lsl rTemp
+		inc rTemp2
+		rjmp convert_apple_x
 
-		//Get the LED that will represent the apple.
-		//rTemp = Column, rTemp2 = i
-		clc
-		ldi rTemp, 0b00000001
-		clr rTemp2
+		set_apple_x:
+			clr rAppleX
+			add rAppleX, rTemp
 
-		convert_apple_x:
-			//Convert lsb to matrix column data.
-			cp rTemp2, rAppleX
-			breq set_apple_x
-			lsl rTemp
-			inc rTemp2
-			rjmp convert_apple_x
+	ret
 
-			set_apple_x:
-				clr rAppleX
-				add rAppleX, rTemp
+clear_matrix:
+	//Clear the matrix.
 
-		ret
+	ldi ZH, HIGH(matrix)
+	ldi ZL, LOW(matrix)
+
+	clr rTemp
+	st Z+, rTemp
+	st Z+, rTemp
+	st Z+, rTemp
+	st Z+, rTemp
+	st Z+, rTemp
+	st Z+, rTemp
+	st Z+, rTemp
+	st Z, rTemp
+
+	ret
 
 snake_move:
 	ldi YH, HIGH(snake)
@@ -459,10 +466,10 @@ snake_move:
 		ld rTemp, Y
 		mov rTemp2, rTemp
 
-		cpi rDirection, 0x3
+		cpi rDirection, 0b00000011
 		breq snake_move_left
 
-		cpi rDirection, 0x4
+		cpi rDirection, 0b00000100
 		breq snake_move_right
 
 		cbr rTemp, 0b00001111
@@ -472,10 +479,10 @@ snake_move:
 		lsr rTemp
 		lsr rTemp
 
-		cpi rDirection, 0x1
+		cpi rDirection, 0b00000001
 		breq snake_move_up
 
-		cpi rDirection, 0x2
+		cpi rDirection, 0b00000010
 		breq snake_move_down
 
 	snake_head_moved:
@@ -501,7 +508,7 @@ snake_move_right:
 
 	cbr rTemp2, 0b00001111
 	or rTemp2, rTemp
-	st Y, rTemp2
+	mov rHead, rTemp2
 
 	rjmp snake_head_moved
 
@@ -519,7 +526,7 @@ snake_move_up:
 
 	cbr rTemp2, 0b11110000
 	or rTemp2, rTemp
-	st Y, rTemp2
+	mov rHead, rTemp2
 
 	rjmp snake_head_moved
 
@@ -537,7 +544,7 @@ snake_move_down:
 
 	cbr rTemp2, 0b11110000
 	or rTemp2, rTemp
-	st Y, rTemp2
+	mov rHead, rTemp2
 
 	rjmp snake_head_moved
 
@@ -551,7 +558,7 @@ snake_move_left:
 
 	cbr rTemp2, 0b00001111
 	or rTemp2, rTemp
-	st Y, rTemp2
+	mov rHead, rTemp2
 
 	rjmp snake_head_moved
 
@@ -578,7 +585,7 @@ snake_render:
 			lsr rTemp
 			lsr rTemp
 
-			cp rTemp, rTemp2
+			cp rTemp, rTemp4
 			brne point_not_row
 
 			mov rTemp, rTemp3
@@ -588,8 +595,10 @@ snake_render:
 			decrease_loop:
 				cpi rTemp, 0b00000000
 				breq end_decrease_loop
+				nop
 				dec rTemp
 				lsl rTemp3
+				jmp decrease_loop
 
 			end_decrease_loop:
 			ld rTemp, X

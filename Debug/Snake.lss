@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.7  C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Sun May 20 16:53:04 2018
+AVRASM ver. 2.2.7  \\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm Tue May 22 13:10:09 2018
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.150\avrasm\inc\m328pdef.inc'
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.150\avrasm\inc\m328pdef.inc'
@@ -1003,21 +1003,24 @@ AVRASM ver. 2.2.7  C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Sn
                                  .DEF rTime = r20
                                  .DEF rCurrentTime = r21
                                  .DEF rDirection = r22
+                                 .DEF rLength = r23
+                                 .DEF rTemp3 = r24
+                                 .DEF rTemp4 = r25
                                  
                                  //Time for timer0
                                  .EQU STARTTIME = 10
-                                 .EQU DEADZONEHIGH = 0x89
-                                 .EQU DEADZONELOW = 0x75
+                                 .EQU MAXLENGTH = 15
                                  
                                  .DSEG
 000100                           matrix:	.BYTE 8
+000108                           snake: .BYTE MAXLENGTH
                                  
                                  .CSEG
                                  //Interrupt vector table.
                                  .ORG 0x0000	//Reset vector.
 000000 c033                      	rjmp reset
                                  .ORG 0x0020 //Timer0 overflow
-000020 c03f                      	rjmp timer0
+000020 c037                      	rjmp timer0
                                  .ORG INT_VECTORS_SIZE
                                  
                                  reset:
@@ -1060,156 +1063,149 @@ AVRASM ver. 2.2.7  C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Sn
 00004f 6807                      	ori rTemp, 0b10000111
 000050 9300 007a                 	sts ADCSRA, rTemp
                                  
-                                 	//Make a pointer to Matrix and store it in Y.
-000052 e0d1                      	ldi YH, HIGH(matrix)
-000053 e0c0                      	ldi YL, LOW(matrix)
-                                 
-                                 	//Clear the matrix.
-000054 2700                      	clr rTemp
-000055 9309                      	st Y+, rTemp
-000056 9309                      	st Y+, rTemp
-000057 9309                      	st Y+, rTemp
-000058 9309                      	st Y+, rTemp
-000059 9309                      	st Y+, rTemp
-00005a 9309                      	st Y+, rTemp
-00005b 9309                      	st Y+, rTemp
-00005c 8308                      	st Y, rTemp
-                                 
                                  	//Initiate stuff.
-00005d d0d6                      	rcall random
-00005e d0de                      	rcall create_apple
+000052 e061                      	ldi rDirection, 0x1
+000053 d0f6                      	rcall clear_matrix
+000054 d16f                      	rcall snake_create
+000055 d0db                      	rcall random
+000056 d0e3                      	rcall create_apple
                                  
-00005f c019                      	rjmp main
+000057 c01e                      	rjmp main
                                  
                                  timer0:
                                  	//Timer0 has been overflowed, start ISR.
                                  	//This ISR is where we have put our game code.
                                  
                                  	//Compare with rTime register.
-000060 1745                      	cp rTime, rCurrentTime
-000061 f014                      	brlt timer0_continue
-000062 9553                      	inc rCurrentTime
-000063 9518                      	reti
+000058 1745                      	cp rTime, rCurrentTime
+000059 f014                      	brlt timer0_continue
+00005a 9553                      	inc rCurrentTime
+00005b 9518                      	reti
                                  
                                  	timer0_continue:
-000064 2755                      		clr rCurrentTime
+00005c 2755                      		clr rCurrentTime
                                  
                                  		//Push rTemp and SREG to stack to be able to restore them once we exit the interrupt.
-000065 930f                      		push rTemp
-000066 b70f                      		in rTemp, SREG
-000067 930f                      		push rTemp
+00005d 930f                      		push rTemp
+00005e b70f                      		in rTemp, SREG
+00005f 930f                      		push rTemp
                                  
                                  		//GAME LOGIC HERE
                                  		//USE Z REGISTER AS POINTER TO MATRIX, IF USED IN GAME UPDATE TO PREVENT ERRORS.
                                  
                                  		game_update:
-000068 d001                      			rcall apple_update
-                                 			//rrcall snake_update
-000069 c00b                      			rjmp end_game_update
+000060 d0e9                      			rcall clear_matrix
+                                 			//rcall create_apple
+000061 d003                      			rcall apple_update
+000062 d0f3                      			rcall snake_move
+000063 d139                      			rcall snake_render
+000064 c00d                      			rjmp end_game_update
                                  
                                  		apple_update:
                                  			//Load pointer to matrix.
-00006a e0f1                      			ldi ZH, HIGH(matrix)
-00006b e0e0                      			ldi ZL, LOW(matrix)
+000065 e0f1                      			ldi ZH, HIGH(matrix)
+000066 e0e0                      			ldi ZL, LOW(matrix)
                                  
                                  			//rTemp2 = i
-00006c 9488                      			clc
-00006d 2711                      			clr rTemp2
+000067 9488                      			clc
+000068 2711                      			clr rTemp2
                                  
                                  			//Compare if this is the row the apple should be in.
                                  			cp_apple_y:
-00006e 1515                      				cp rTemp2, rAppleY
-00006f f019                      				breq insert_apple
-000070 9513                      				inc rTemp2
-000071 9101                      				ld rTemp, Z+
-000072 cffb                      				rjmp cp_apple_y
+000069 1515                      				cp rTemp2, rAppleY
+00006a f019                      				breq insert_apple
+00006b 9513                      				inc rTemp2
+00006c 9101                      				ld rTemp, Z+
+00006d cffb                      				rjmp cp_apple_y
                                  
                                  				insert_apple:
                                  				//Insert apple into the matrix.
-000073 8240                      				st Z, rAppleX
+00006e 8100                      				ld rTemp, Z
+00006f 2904                      				or rTemp, rAppleX
+000070 8300                      				st Z, rTemp
                                  
-000074 9508                      			ret
+000071 9508                      			ret
                                  
                                  		end_game_update:
                                  		//Pop SREG and rTemp from stack and restore them.
-000075 910f                      		pop rTemp
-000076 bf0f                      		out SREG, rTemp
-000077 910f                      		pop rTemp
-000078 9518                      		reti
+000072 910f                      		pop rTemp
+000073 bf0f                      		out SREG, rTemp
+000074 910f                      		pop rTemp
+000075 9518                      		reti
                                  
                                  main:
-000079 d017                      	rcall input_x
-00007a d004                      	rcall input_y
-00007b d0b8                      	rcall random
-00007c d025                      	rcall move_direction
-00007d d039                      	rcall screen_update
-00007e cffa                      	rjmp main
+000076 d017                      	rcall input_x
+000077 d004                      	rcall input_y
+000078 d0b8                      	rcall random
+000079 d025                      	rcall move_direction
+00007a d039                      	rcall screen_update
+00007b cffa                      	rjmp main
                                  
                                  input_y:
                                  	// Y input
-00007f 9100 007c                 	lds rTemp, ADMUX
-000081 7f0e                      	cbr rTemp, 1
-000082 6204                      	ori rTemp, 0b00100100
-000083 9300 007c                 	sts ADMUX, rTemp
+00007c 9100 007c                 	lds rTemp, ADMUX
+00007e 7f0e                      	cbr rTemp, 1
+00007f 6204                      	ori rTemp, 0b00100100
+000080 9300 007c                 	sts ADMUX, rTemp
                                  
-000085 9100 007a                 	lds rTemp, ADCSRA
-000087 6400                      	ori rTemp, (1<<ADSC)
-000088 9300 007a                 	sts ADCSRA, rTemp
+000082 9100 007a                 	lds rTemp, ADCSRA
+000084 6400                      	ori rTemp, (1<<ADSC)
+000085 9300 007a                 	sts ADCSRA, rTemp
                                  
                                  	ad_doneY: 
-00008a 9100 007a                 		lds rTemp, ADCSRA
-00008c fd06                      		sbrc rTemp, 6
-00008d cffc                      		rjmp ad_doneY
-00008e 9130 0079                 	lds rJoyY, ADCH
-000090 9508                      	ret
+000087 9100 007a                 		lds rTemp, ADCSRA
+000089 fd06                      		sbrc rTemp, 6
+00008a cffc                      		rjmp ad_doneY
+00008b 9130 0079                 	lds rJoyY, ADCH
+00008d 9508                      	ret
                                  
                                  input_x:
-000091 9100 007c                 	lds rTemp, ADMUX
-000093 6205                      	ori rTemp, 0b00100101
-000094 9300 007c                 	sts ADMUX, rTemp
+00008e 9100 007c                 	lds rTemp, ADMUX
+000090 6205                      	ori rTemp, 0b00100101
+000091 9300 007c                 	sts ADMUX, rTemp
                                  
-000096 9100 007a                 	lds rTemp, ADCSRA
-000098 6400                      	ori rTemp, (1<<ADSC)
-000099 9300 007a                 	sts ADCSRA, rTemp
+000093 9100 007a                 	lds rTemp, ADCSRA
+000095 6400                      	ori rTemp, (1<<ADSC)
+000096 9300 007a                 	sts ADCSRA, rTemp
                                  
                                  	ad_doneX: 
-00009b 9100 007a                 		lds rTemp, ADCSRA
-00009d fd06                      		sbrc rTemp, 6
-00009e cffc                      		rjmp ad_doneX
-00009f 9120 0079                 	lds rJoyX, ADCH
-0000a1 9508                      	ret
+000098 9100 007a                 		lds rTemp, ADCSRA
+00009a fd06                      		sbrc rTemp, 6
+00009b cffc                      		rjmp ad_doneX
+00009c 9120 0079                 	lds rJoyX, ADCH
+00009e 9508                      	ret
                                  
                                  move_direction:
-0000a2 3c35                      	cpi rJoyY, 197
-0000a3 f438                      	brsh y_greater
+00009f 3c35                      	cpi rJoyY, 197
+0000a0 f438                      	brsh y_greater
                                  
-0000a4 333e                      	cpi rJoyY, 62
-0000a5 f040                      	brlo y_lower
+0000a1 333e                      	cpi rJoyY, 62
+0000a2 f040                      	brlo y_lower
                                  
-0000a6 3829                      	cpi rJoyX, 137
-0000a7 f448                      	brsh x_greater
+0000a3 3829                      	cpi rJoyX, 137
+0000a4 f448                      	brsh x_greater
                                  
-0000a8 3624                      	cpi rJoyX, 100
-0000a9 f050                      	brlo x_lower
+0000a5 3624                      	cpi rJoyX, 100
+0000a6 f050                      	brlo x_lower
                                  
-0000aa 9508                      	ret
+0000a7 9508                      	ret
                                  
                                  	// Joystick up
                                  	y_greater:
-0000ab 9160 0001                 		lds rDirection, 0x1
-0000ad 9508                      		ret
+0000a8 9160 0001                 		lds rDirection, 0b00000001
+0000aa 9508                      		ret
                                  	// Joystick down
                                  	y_lower:
-0000ae 9160 0002                 		lds rDirection, 0x2
-0000b0 9508                      		ret
+0000ab 9160 0002                 		lds rDirection, 0b00000010
+0000ad 9508                      		ret
                                  	// Joystick left
                                  	x_greater:
-0000b1 9160 0003                 		lds rDirection, 0x3
-0000b3 9508                      		ret
+0000ae 9160 0003                 		lds rDirection, 0b00000011
+0000b0 9508                      		ret
                                  	// Joystick right
                                  	x_lower:
-0000b4 9160 0004                 		lds rDirection, 0x4
-0000b6 9508                      		ret
+0000b1 9160 0004                 		lds rDirection, 0b00000100
+0000b3 9508                      		ret
                                  
                                  screen_update:
                                  	//Updates the screen with data from the 8 byte Matrix.
@@ -1218,217 +1214,410 @@ AVRASM ver. 2.2.7  C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Sn
                                  	//rcalling light columns several times to increase the time they get energized. (Increased light level)
                                  
                                  	//Reset pointer to Matrix.
-0000b7 e0d1                      	ldi YH, HIGH(matrix)
-0000b8 e0c0                      	ldi YL, LOW(matrix)
+0000b4 e0d1                      	ldi YH, HIGH(matrix)
+0000b5 e0c0                      	ldi YL, LOW(matrix)
                                  
                                  	//Matrix 1
-0000b9 9109                      	ld rTemp, Y+
-0000ba d04f                      	rcall reset_columns
-0000bb 9a40                      	sbi PORTC, 0
-0000bc d056                      	rcall light_columns
-0000bd d055                      	rcall light_columns
-0000be d054                      	rcall light_columns
-0000bf d053                      	rcall light_columns
-0000c0 d052                      	rcall light_columns
-0000c1 d051                      	rcall light_columns
-0000c2 9840                      	cbi PORTC, 0
+0000b6 9109                      	ld rTemp, Y+
+0000b7 d04f                      	rcall reset_columns
+0000b8 9a40                      	sbi PORTC, 0
+0000b9 d056                      	rcall light_columns
+0000ba d055                      	rcall light_columns
+0000bb d054                      	rcall light_columns
+0000bc d053                      	rcall light_columns
+0000bd d052                      	rcall light_columns
+0000be d051                      	rcall light_columns
+0000bf 9840                      	cbi PORTC, 0
                                  	
                                  	//Matrix 2
-0000c3 9109                      	ld rTemp, Y+
-0000c4 d045                      	rcall reset_columns
-0000c5 9a41                      	sbi PORTC, 1
-0000c6 d04c                      	rcall light_columns
-0000c7 d04b                      	rcall light_columns
-0000c8 d04a                      	rcall light_columns
-0000c9 d049                      	rcall light_columns
-0000ca d048                      	rcall light_columns
-0000cb d047                      	rcall light_columns
-0000cc 9841                      	cbi PORTC, 1
+0000c0 9109                      	ld rTemp, Y+
+0000c1 d045                      	rcall reset_columns
+0000c2 9a41                      	sbi PORTC, 1
+0000c3 d04c                      	rcall light_columns
+0000c4 d04b                      	rcall light_columns
+0000c5 d04a                      	rcall light_columns
+0000c6 d049                      	rcall light_columns
+0000c7 d048                      	rcall light_columns
+0000c8 d047                      	rcall light_columns
+0000c9 9841                      	cbi PORTC, 1
                                  
                                  	//Matrix 3
-0000cd 9109                      	ld rTemp, Y+
-0000ce d03b                      	rcall reset_columns
-0000cf 9a42                      	sbi PORTC, 2
-0000d0 d042                      	rcall light_columns
-0000d1 d041                      	rcall light_columns
-0000d2 d040                      	rcall light_columns
-0000d3 d03f                      	rcall light_columns
-0000d4 d03e                      	rcall light_columns
-0000d5 d03d                      	rcall light_columns
-0000d6 9842                      	cbi PORTC, 2
+0000ca 9109                      	ld rTemp, Y+
+0000cb d03b                      	rcall reset_columns
+0000cc 9a42                      	sbi PORTC, 2
+0000cd d042                      	rcall light_columns
+0000ce d041                      	rcall light_columns
+0000cf d040                      	rcall light_columns
+0000d0 d03f                      	rcall light_columns
+0000d1 d03e                      	rcall light_columns
+0000d2 d03d                      	rcall light_columns
+0000d3 9842                      	cbi PORTC, 2
                                  
                                  	//Matrix 4
-0000d7 9109                      	ld rTemp, Y+
-0000d8 d031                      	rcall reset_columns
-0000d9 9a43                      	sbi PORTC, 3
-0000da d038                      	rcall light_columns
-0000db d037                      	rcall light_columns
-0000dc d036                      	rcall light_columns
-0000dd d035                      	rcall light_columns
-0000de d034                      	rcall light_columns
-0000df d033                      	rcall light_columns
-0000e0 9843                      	cbi PORTC, 3
+0000d4 9109                      	ld rTemp, Y+
+0000d5 d031                      	rcall reset_columns
+0000d6 9a43                      	sbi PORTC, 3
+0000d7 d038                      	rcall light_columns
+0000d8 d037                      	rcall light_columns
+0000d9 d036                      	rcall light_columns
+0000da d035                      	rcall light_columns
+0000db d034                      	rcall light_columns
+0000dc d033                      	rcall light_columns
+0000dd 9843                      	cbi PORTC, 3
                                  
                                  	//Matrix 5
-0000e1 9109                      	ld rTemp, Y+
-0000e2 d027                      	rcall reset_columns
-0000e3 9a5a                      	sbi PORTD, 2
-0000e4 d02e                      	rcall light_columns
-0000e5 d02d                      	rcall light_columns
-0000e6 d02c                      	rcall light_columns
-0000e7 d02b                      	rcall light_columns
-0000e8 d02a                      	rcall light_columns
-0000e9 d029                      	rcall light_columns
-0000ea 985a                      	cbi PORTD, 2
+0000de 9109                      	ld rTemp, Y+
+0000df d027                      	rcall reset_columns
+0000e0 9a5a                      	sbi PORTD, 2
+0000e1 d02e                      	rcall light_columns
+0000e2 d02d                      	rcall light_columns
+0000e3 d02c                      	rcall light_columns
+0000e4 d02b                      	rcall light_columns
+0000e5 d02a                      	rcall light_columns
+0000e6 d029                      	rcall light_columns
+0000e7 985a                      	cbi PORTD, 2
                                  
                                  	//Matrix 6
-0000eb 9109                      	ld rTemp, Y+
-0000ec d01d                      	rcall reset_columns
-0000ed 9a5b                      	sbi PORTD, 3
-0000ee d024                      	rcall light_columns
-0000ef d023                      	rcall light_columns
-0000f0 d022                      	rcall light_columns
-0000f1 d021                      	rcall light_columns
-0000f2 d020                      	rcall light_columns
-0000f3 d01f                      	rcall light_columns
-0000f4 985b                      	cbi PORTD, 3
+0000e8 9109                      	ld rTemp, Y+
+0000e9 d01d                      	rcall reset_columns
+0000ea 9a5b                      	sbi PORTD, 3
+0000eb d024                      	rcall light_columns
+0000ec d023                      	rcall light_columns
+0000ed d022                      	rcall light_columns
+0000ee d021                      	rcall light_columns
+0000ef d020                      	rcall light_columns
+0000f0 d01f                      	rcall light_columns
+0000f1 985b                      	cbi PORTD, 3
                                  
                                  	//Matrix 7
-0000f5 9109                      	ld rTemp, Y+
-0000f6 d013                      	rcall reset_columns
-0000f7 9a5c                      	sbi PORTD, 4
-0000f8 d01a                      	rcall light_columns
-0000f9 d019                      	rcall light_columns
-0000fa d018                      	rcall light_columns
-0000fb d017                      	rcall light_columns
-0000fc d016                      	rcall light_columns
-0000fd d015                      	rcall light_columns
-0000fe 985c                      	cbi PORTD, 4
+0000f2 9109                      	ld rTemp, Y+
+0000f3 d013                      	rcall reset_columns
+0000f4 9a5c                      	sbi PORTD, 4
+0000f5 d01a                      	rcall light_columns
+0000f6 d019                      	rcall light_columns
+0000f7 d018                      	rcall light_columns
+0000f8 d017                      	rcall light_columns
+0000f9 d016                      	rcall light_columns
+0000fa d015                      	rcall light_columns
+0000fb 985c                      	cbi PORTD, 4
                                  
                                  	//Matrix 8
-0000ff 8108                      	ld rTemp, Y
-000100 d009                      	rcall reset_columns
-000101 9a5d                      	sbi PORTD, 5
-000102 d010                      	rcall light_columns
-000103 d00f                      	rcall light_columns
-000104 d00e                      	rcall light_columns
-000105 d00d                      	rcall light_columns
-000106 d00c                      	rcall light_columns
-000107 d00b                      	rcall light_columns
-000108 985d                      	cbi PORTD, 5
+0000fc 8108                      	ld rTemp, Y
+0000fd d009                      	rcall reset_columns
+0000fe 9a5d                      	sbi PORTD, 5
+0000ff d010                      	rcall light_columns
+000100 d00f                      	rcall light_columns
+000101 d00e                      	rcall light_columns
+000102 d00d                      	rcall light_columns
+000103 d00c                      	rcall light_columns
+000104 d00b                      	rcall light_columns
+000105 985d                      	cbi PORTD, 5
                                  
-000109 9508                      	ret
+000106 9508                      	ret
                                  
                                  reset_columns:
                                  
-00010a 985e                      	cbi PORTD, 6
-00010b 985f                      	cbi PORTD, 7
-00010c 9828                      	cbi PORTB, 0
-00010d 9829                      	cbi PORTB, 1
-00010e 982a                      	cbi PORTB, 2
-00010f 982b                      	cbi PORTB, 3
-000110 982c                      	cbi PORTB, 4
-000111 982d                      	cbi PORTB, 5
-000112 9508                      	ret
+000107 985e                      	cbi PORTD, 6
+000108 985f                      	cbi PORTD, 7
+000109 9828                      	cbi PORTB, 0
+00010a 9829                      	cbi PORTB, 1
+00010b 982a                      	cbi PORTB, 2
+00010c 982b                      	cbi PORTB, 3
+00010d 982c                      	cbi PORTB, 4
+00010e 982d                      	cbi PORTB, 5
+00010f 9508                      	ret
                                  
                                  light_columns:
                                  
                                  	//Light 1
-000113 fd00                      	sbrc rTemp, 0
-000114 9a5e                      	sbi PORTD, 6
-000115 ff00                      	sbrs rTemp, 0
-000116 985e                      	cbi PORTD, 6
+000110 fd00                      	sbrc rTemp, 0
+000111 9a5e                      	sbi PORTD, 6
+000112 ff00                      	sbrs rTemp, 0
+000113 985e                      	cbi PORTD, 6
                                  
                                  	//Light 2 if set.
-000117 fd01                      	sbrc rTemp, 1
-000118 9a5f                      	sbi PORTD, 7
-000119 ff01                      	sbrs rTemp, 1
-00011a 985f                      	cbi PORTD, 7
+000114 fd01                      	sbrc rTemp, 1
+000115 9a5f                      	sbi PORTD, 7
+000116 ff01                      	sbrs rTemp, 1
+000117 985f                      	cbi PORTD, 7
                                  
                                  	//Light 3 if set.
-00011b fd02                      	sbrc rTemp, 2
-00011c 9a28                      	sbi PORTB, 0
-00011d ff02                      	sbrs rTemp, 2
-00011e 9828                      	cbi PORTB, 0
+000118 fd02                      	sbrc rTemp, 2
+000119 9a28                      	sbi PORTB, 0
+00011a ff02                      	sbrs rTemp, 2
+00011b 9828                      	cbi PORTB, 0
                                  
                                  	//Light 4 if set.
-00011f fd03                      	sbrc rTemp, 3
-000120 9a29                      	sbi PORTB, 1
-000121 ff03                      	sbrs rTemp, 3
-000122 9829                      	cbi PORTB, 1
+00011c fd03                      	sbrc rTemp, 3
+00011d 9a29                      	sbi PORTB, 1
+00011e ff03                      	sbrs rTemp, 3
+00011f 9829                      	cbi PORTB, 1
                                  
                                  	//Light 5 if set.
-000123 fd04                      	sbrc rTemp, 4
-000124 9a2a                      	sbi PORTB, 2
-000125 ff04                      	sbrs rTemp, 4
-000126 982a                      	cbi PORTB, 2
+000120 fd04                      	sbrc rTemp, 4
+000121 9a2a                      	sbi PORTB, 2
+000122 ff04                      	sbrs rTemp, 4
+000123 982a                      	cbi PORTB, 2
                                  
                                  	//Light 6 if set.
-000127 fd05                      	sbrc rTemp, 5
-000128 9a2b                      	sbi PORTB, 3
-000129 ff05                      	sbrs rTemp, 5
-00012a 982b                      	cbi PORTB, 3
+000124 fd05                      	sbrc rTemp, 5
+000125 9a2b                      	sbi PORTB, 3
+000126 ff05                      	sbrs rTemp, 5
+000127 982b                      	cbi PORTB, 3
                                  
                                  	//Light 7 if set.
-00012b fd06                      	sbrc rTemp, 6
-00012c 9a2c                      	sbi PORTB, 4
-00012d ff06                      	sbrs rTemp, 6
-00012e 982c                      	cbi PORTB, 4
+000128 fd06                      	sbrc rTemp, 6
+000129 9a2c                      	sbi PORTB, 4
+00012a ff06                      	sbrs rTemp, 6
+00012b 982c                      	cbi PORTB, 4
                                  
                                  	//Light 8 if set.
-00012f fd07                      	sbrc rTemp, 7
-000130 9a2d                      	sbi PORTB, 5
-000131 ff07                      	sbrs rTemp, 7
-000132 982d                      	cbi PORTB, 5
+00012c fd07                      	sbrc rTemp, 7
+00012d 9a2d                      	sbi PORTB, 5
+00012e ff07                      	sbrs rTemp, 7
+00012f 982d                      	cbi PORTB, 5
                                  
-000133 9508                      	ret
+000130 9508                      	ret
                                  
                                  random:
                                  	//Generate a random X value.
-000134 0e22                      	add rRandomX, rJoyX
-000135 2700                      	clr rTemp
-000136 5f0b                      	subi rTemp, -5
-000137 1a20                      	sub rRandomX, rTemp
+000131 0e22                      	add rRandomX, rJoyX
+000132 2700                      	clr rTemp
+000133 5f0b                      	subi rTemp, -5
+000134 1a20                      	sub rRandomX, rTemp
                                  
                                  	//Generate a random Y value.
-000138 0e33                      	add rRandomY, rJoyY
-000139 2700                      	clr rTemp
-00013a 5f0b                      	subi rTemp, -5
-00013b 1a30                      	sub rRandomY, rTemp
+000135 0e33                      	add rRandomY, rJoyY
+000136 2700                      	clr rTemp
+000137 5f0b                      	subi rTemp, -5
+000138 1a30                      	sub rRandomY, rTemp
                                  
-00013c 9508                      	ret
+000139 9508                      	ret
                                  
                                  create_apple:
-                                 		//Create an apple for the matrix.
+                                 	//Create an apple for the matrix.
                                  
-                                 		//Copy random values to the new apple position.
-00013d 2c42                      		mov rAppleX, rRandomX
-00013e 2c53                      		mov rAppleY, rRandomY
+                                 	//Copy random values to the new apple position.
+00013a 2c42                      	mov rAppleX, rRandomX
+00013b 2c53                      	mov rAppleY, rRandomY
                                  
-                                 		//Remove all bits except the 3 lsb. (least significant bits)
-00013f e007                      		ldi rTemp, 0b00000111
-000140 2240                      		and rAppleX, rTemp
-000141 2250                      		and rAppleY, rTemp
+                                 	//Remove all bits except the 3 lsb. (least significant bits)
+00013c e007                      	ldi rTemp, 0b00000111
+00013d 2240                      	and rAppleX, rTemp
+00013e 2250                      	and rAppleY, rTemp
+                                 	//Get the LED that will represent the apple.
+                                 	//rTemp = Column, rTemp2 = i
+00013f 9488                      	clc
+000140 e001                      	ldi rTemp, 0b00000001
+000141 2711                      	clr rTemp2
                                  
+                                 	convert_apple_x:
+                                 		//Convert lsb to matrix column data.
+000142 1514                      		cp rTemp2, rAppleX
+000143 f019                      		breq set_apple_x
+000144 0f00                      		lsl rTemp
+000145 9513                      		inc rTemp2
+000146 cffb                      		rjmp convert_apple_x
                                  
-                                 		//Get the LED that will represent the apple.
-                                 		//rTemp = Column, rTemp2 = i
-000142 9488                      		clc
-000143 e001                      		ldi rTemp, 0b00000001
-000144 2711                      		clr rTemp2
+                                 		set_apple_x:
+000147 2444                      			clr rAppleX
+000148 0e40                      			add rAppleX, rTemp
                                  
-                                 		convert_apple_x:
-                                 			//Convert lsb to matrix column data.
-000145 1514                      			cp rTemp2, rAppleX
-000146 f019                      			breq set_apple_x
-000147 0f00                      			lsl rTemp
-000148 9513                      			inc rTemp2
-000149 cffb                      			rjmp convert_apple_x
+000149 9508                      	ret
                                  
-                                 			set_apple_x:
-00014a 2444                      				clr rAppleX
-00014b 0e40                      				add rAppleX, rTemp
+                                 clear_matrix:
+                                 	//Clear the matrix.
                                  
+00014a e0f1                      	ldi ZH, HIGH(matrix)
+00014b e0e0                      	ldi ZL, LOW(matrix)
+                                 
+00014c 2700                      	clr rTemp
+00014d 9301                      	st Z+, rTemp
+00014e 9301                      	st Z+, rTemp
+00014f 9301                      	st Z+, rTemp
+000150 9301                      	st Z+, rTemp
+000151 9301                      	st Z+, rTemp
+000152 9301                      	st Z+, rTemp
+000153 9301                      	st Z+, rTemp
+000154 8300                      	st Z, rTemp
+                                 
+000155 9508                      	ret
+                                 
+                                 snake_move:
+000156 e0d1                      	ldi YH, HIGH(snake)
+000157 e0c8                      	ldi YL, LOW(snake)
+                                 
+                                 	snake_head:
+000158 8108                      		ld rTemp, Y
+000159 2f10                      		mov rTemp2, rTemp
+                                 
+00015a 3063                      		cpi rDirection, 0b00000011
+00015b f1c1                      		breq snake_move_left
+                                 
+00015c 3064                      		cpi rDirection, 0b00000100
+00015d f099                      		breq snake_move_right
+                                 
+00015e 7f00                      		cbr rTemp, 0b00001111
+00015f 9488                      		clc
+000160 9506                      		lsr rTemp
+000161 9506                      		lsr rTemp
+000162 9506                      		lsr rTemp
+000163 9506                      		lsr rTemp
+                                 
+000164 3061                      		cpi rDirection, 0b00000001
+000165 f0a1                      		breq snake_move_up
+                                 
+000166 3062                      		cpi rDirection, 0b00000010
+000167 f0f9                      		breq snake_move_down
+                                 
+                                 	snake_head_moved:
+000168 e010                      	ldi rTemp2, 0b00000000
+000169 9109                      	ld rTemp, Y+
+                                 	snake_loop:
+00016a 8188                      		ld rTemp3, Y
+00016b 9309                      		st Y+, rTemp
+00016c 2f08                      		mov rTemp, rTemp3
+                                 		
+00016d 9513                      		inc rTemp2
+00016e 1717                      		cp rTemp2, rLength
+00016f f3d0                      		brlo snake_loop
+000170 9508                      	ret
+                                 
+                                 snake_move_right:
+000171 700f                      	cbr rTemp, 0b11110000
+000172 3007                      	cpi rTemp, 0b00000111
+000173 f409                      	brne right_no_teleport
+000174 ef0f                      		ldi rTemp, 0b11111111
+                                 	right_no_teleport:
+000175 9503                      	inc rTemp
+                                 
+000176 7f10                      	cbr rTemp2, 0b00001111
+000177 2b10                      	or rTemp2, rTemp
+000178 8318                      	st Y, rTemp2
+                                 
+000179 cfee                      	rjmp snake_head_moved
+                                 
+                                 snake_move_up:
+00017a 3000                      	cpi rTemp, 0b00000000
+00017b f409                      	brne up_no_teleport
+00017c e008                      		ldi rTemp, 0b00001000
+                                 	up_no_teleport:
+00017d 950a                      	dec rTemp
+00017e 9488                      	clc
+00017f 0f00                      	lsl rTemp
+000180 0f00                      	lsl rTemp
+000181 0f00                      	lsl rTemp
+000182 0f00                      	lsl rTemp
+                                 
+000183 701f                      	cbr rTemp2, 0b11110000
+000184 2b10                      	or rTemp2, rTemp
+000185 8318                      	st Y, rTemp2
+                                 
+000186 cfe1                      	rjmp snake_head_moved
+                                 
+                                 snake_move_down:
+000187 3007                      	cpi rTemp, 0b00000111
+000188 f409                      	brne down_no_teleport
+000189 ef0f                      		ldi rTemp, 0b11111111
+                                 	down_no_teleport:
+00018a 9503                      	inc rTemp
+00018b 9488                      	clc
+00018c 0f00                      	lsl rTemp
+00018d 0f00                      	lsl rTemp
+00018e 0f00                      	lsl rTemp
+00018f 0f00                      	lsl rTemp
+                                 
+000190 701f                      	cbr rTemp2, 0b11110000
+000191 2b10                      	or rTemp2, rTemp
+000192 8318                      	st Y, rTemp2
+                                 
+000193 cfd4                      	rjmp snake_head_moved
+                                 
+                                 snake_move_left:
+000194 700f                      	cbr rTemp, 0b11110000
+000195 3000                      	cpi rTemp, 0b00000000
+000196 f409                      	brne left_no_teleport
+000197 e008                      		ldi rTemp, 0b00001000
+                                 	left_no_teleport:
+000198 950a                      	dec rTemp
+                                 
+000199 7f10                      	cbr rTemp2, 0b00001111
+00019a 2b10                      	or rTemp2, rTemp
+00019b 8318                      	st Y, rTemp2
+                                 
+00019c cfcb                      	rjmp snake_head_moved
+                                 
+                                 snake_render:
+00019d e0b1                      	ldi XH, HIGH(matrix)
+00019e e0a0                      	ldi XL, LOW(matrix)
+                                 
+00019f e090                      	ldi rTemp4, 0b00000000
+                                 
+                                 	render_loop:
+0001a0 e0d1                      		ldi YH, HIGH(snake)
+0001a1 e0c8                      		ldi YL, LOW(snake)
+                                 
+0001a2 e010                      		ldi rTemp2, 0b00000000
+                                 
+                                 		snake_row_point_finder:
+0001a3 9109                      			ld rTemp, Y+
+0001a4 2f80                      			mov rTemp3, rTemp
+                                 			
+0001a5 7f00                      			cbr rTemp, 0b00001111
+0001a6 9488                      			clc
+0001a7 9506                      			lsr rTemp
+0001a8 9506                      			lsr rTemp
+0001a9 9506                      			lsr rTemp
+0001aa 9506                      			lsr rTemp
+                                 
+0001ab 1709                      			cp rTemp, rTemp4
+0001ac f469                      			brne point_not_row
+                                 
+0001ad 2f08                      			mov rTemp, rTemp3
+0001ae 700f                      			cbr rTemp, 0b11110000
+0001af e081                      			ldi rTemp3, 0b00000001
+                                 			
+                                 			decrease_loop:
+0001b0 3000                      				cpi rTemp, 0b00000000
+0001b1 f029                      				breq end_decrease_loop
+0001b2 0000                      				nop
+0001b3 950a                      				dec rTemp
+0001b4 0f88                      				lsl rTemp3
+0001b5 940c 01b0                 				jmp decrease_loop
+                                 
+                                 			end_decrease_loop:
+0001b7 910c                      			ld rTemp, X
+0001b8 2b08                      			or rTemp, rTemp3
+0001b9 930c                      			st X, rTemp
+                                 
+                                 			point_not_row:
+                                 
+0001ba 9513                      			inc rTemp2
+0001bb 1717                      			cp rTemp2, rLength
+0001bc f330                      			brlo snake_row_point_finder
+0001bd 0000                      			nop
+0001be 9593                      		inc rTemp4
+0001bf 911d                      		ld rTemp2, X+
+0001c0 3098                      		cpi rTemp4, 0b00001000
+0001c1 f2f0                      		brlo render_loop
+0001c2 0000                      		nop
+                                 	//End render_loop
+0001c3 9508                      	ret
+                                 
+                                 snake_create:
+0001c4 e073                      	ldi rLength, 0b00000011
+                                 
+0001c5 e0d1                      	ldi YH, HIGH(snake)
+0001c6 e0c8                      	ldi YL, LOW(snake)
+                                 
+0001c7 e000                      	ldi rTemp, 0b00000000
+0001c8 9309                      	st Y+, rTemp
+0001c9 e001                      	ldi rTemp, 0b00000001
+0001ca 9309                      	st Y+, rTemp
+0001cb e002                      	ldi rTemp, 0b00000010
+0001cc 8308                      	st Y, rTemp
+                                 
+0001cd 9508                      	ret
 
 
 RESOURCE USE INFORMATION
@@ -1446,40 +1635,40 @@ counted separately from r26..r31 here.
 .dseg memory usage only counts static data declared with .byte
 
 "ATmega328P" register use summary:
-x  :   0 y  :  16 z  :   2 r0 :   0 r1 :   0 r2 :   3 r3 :   3 r4 :   6 
+x  :   3 y  :  20 z  :  11 r0 :   0 r1 :   0 r2 :   3 r3 :   3 r4 :   6 
 r5 :   3 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
-r13:   0 r14:   0 r15:   0 r16:  91 r17:   6 r18:   4 r19:   4 r20:   2 
-r21:   4 r22:   4 r23:   0 r24:   0 r25:   0 r26:   0 r27:   0 r28:   2 
-r29:   2 r30:   1 r31:   1 
-Registers used: 17 out of 35 (48.6%)
+r13:   0 r14:   0 r15:   0 r16: 151 r17:  26 r18:   4 r19:   4 r20:   2 
+r21:   4 r22:   9 r23:   3 r24:   7 r25:   4 r26:   1 r27:   1 r28:   4 
+r29:   4 r30:   2 r31:   2 
+Registers used: 23 out of 35 (65.7%)
 
 "ATmega328P" instruction use summary:
 .lds  :   0 .sts  :   0 adc   :   0 add   :   3 adiw  :   0 and   :   2 
 andi  :   0 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
-brcc  :   0 brcs  :   0 break :   0 breq  :   2 brge  :   0 brhc  :   0 
-brhs  :   0 brid  :   0 brie  :   0 brlo  :   2 brlt  :   1 brmi  :   0 
-brne  :   0 brpl  :   0 brsh  :   2 brtc  :   0 brts  :   0 brvc  :   0 
-brvs  :   0 bset  :   0 bst   :   0 call  :   0 cbi   :  24 cbr   :   1 
-clc   :   2 clh   :   0 cli   :   0 cln   :   0 clr   :   7 cls   :   0 
-clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   3 cpc   :   0 
-cpi   :   4 cpse  :   0 dec   :   0 eor   :   0 fmul  :   0 fmuls :   0 
-fmulsu:   0 icall :   0 ijmp  :   0 in    :   1 inc   :   3 jmp   :   0 
-ld    :   9 ldd   :   0 ldi   :  18 lds   :  14 lpm   :   0 lsl   :   1 
-lsr   :   0 mov   :   2 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
-neg   :   0 nop   :   0 or    :   0 ori   :   6 out   :   8 pop   :   2 
-push  :   2 rcall :  64 ret   :  13 reti  :   2 rjmp  :   9 rol   :   0 
+brcc  :   0 brcs  :   0 break :   0 breq  :   7 brge  :   0 brhc  :   0 
+brhs  :   0 brid  :   0 brie  :   0 brlo  :   5 brlt  :   1 brmi  :   0 
+brne  :   5 brpl  :   0 brsh  :   2 brtc  :   0 brts  :   0 brvc  :   0 
+brvs  :   0 bset  :   0 bst   :   0 call  :   0 cbi   :  24 cbr   :  10 
+clc   :   6 clh   :   0 cli   :   0 cln   :   0 clr   :   7 cls   :   0 
+clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   6 cpc   :   0 
+cpi   :  14 cpse  :   0 dec   :   3 eor   :   0 fmul  :   0 fmuls :   0 
+fmulsu:   0 icall :   0 ijmp  :   0 in    :   1 inc   :   8 jmp   :   1 
+ld    :  16 ldd   :   0 ldi   :  39 lds   :  14 lpm   :   0 lsl   :  10 
+lsr   :   8 mov   :   6 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
+neg   :   0 nop   :   3 or    :   6 ori   :   6 out   :   8 pop   :   2 
+push  :   2 rcall :  69 ret   :  17 reti  :   2 rjmp  :  13 rol   :   0 
 ror   :   0 sbc   :   0 sbci  :   0 sbi   :  16 sbic  :   0 sbis  :   0 
 sbiw  :   0 sbr   :   0 sbrc  :  10 sbrs  :   8 sec   :   0 seh   :   0 
 sei   :   1 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
-sez   :   0 sleep :   0 spm   :   0 st    :   9 std   :   0 sts   :   7 
+sez   :   0 sleep :   0 spm   :   0 st    :  18 std   :   0 sts   :   7 
 sub   :   2 subi  :   2 swap  :   0 tst   :   0 wdr   :   0 
-Instructions used: 35 out of 113 (31.0%)
+Instructions used: 41 out of 113 (36.3%)
 
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x00029a    566      0    566   32768   1.7%
-[.dseg] 0x000100 0x000108      0      8      8    2048   0.4%
+[.cseg] 0x000000 0x00039c    824      0    824   32768   2.5%
+[.dseg] 0x000100 0x000117      0     23     23    2048   1.1%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 
 Assembly complete, 0 errors, 0 warnings
