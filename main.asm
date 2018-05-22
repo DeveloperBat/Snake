@@ -110,14 +110,12 @@ timer0:
 
 		game_update:
 			rcall clear_matrix
-<<<<<<< HEAD
 			rcall apple_check
-=======
-			//rcall create_apple
->>>>>>> 3da8aca4ae54b112079bcdd0a5059907329d600b
+			rcall snake_check
 			rcall apple_update
 			rcall snake_move
 			rcall snake_render
+
 		//Pop SREG and rTemp from stack and restore them.
 		pop rTemp
 		out SREG, rTemp
@@ -458,7 +456,7 @@ snake_check:
 
 	//Compare if there is another segment in the snake
 	cp rLength, rTemp2
-	brlt snake_compare:
+	brlt snake_compare
 	ret
 
 	snake_collision:
