@@ -112,9 +112,9 @@ timer0:
 			rcall clear_matrix
 			rcall move_direction
 			rcall snake_move
-			rcall apple_update
 			rcall snake_render
 			rcall apple_check
+			rcall apple_update
 			rcall snake_check
 
 		//Pop SREG and rTemp from stack and restore them.
@@ -439,23 +439,24 @@ apple_update:
 			lsl rTemp3
 			inc rTemp2
 			rjmp apple_convert_X
-			
-			ldi YH, HIGH(snake)
-			ldi YL, LOW(snake)
-			clr rTemp
 
 			apple_valid_position:
+				ldi YH, HIGH(snake)
+				ldi YL, LOW(snake)
+
+				compare_apple_snake:
+				//Check if apple is not in snake.
 				ld rTemp, Y+
+				inc rTemp2
 
 				cp rTemp, rAppleXY
 				breq apple_create
 
-				inc rTemp2
 				cp rLength, rTemp2
 				brlo apple_set
 
 				
-				rjmp apple_valid_position
+				rjmp compare_apple_snake
 
 	apple_set:
 	ld rTemp, Z

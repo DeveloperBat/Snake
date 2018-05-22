@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.7  C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Tue May 22 14:51:51 2018
+AVRASM ver. 2.2.7  C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Tue May 22 15:11:02 2018
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.150\avrasm\inc\m328pdef.inc'
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.150\avrasm\inc\m328pdef.inc'
@@ -1066,8 +1066,8 @@ AVRASM ver. 2.2.7  C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Sn
                                  
                                  	//Initiate stuff.
 000052 e063                      	ldi rDirection, 0b00000011
-000053 d11e                      	rcall clear_matrix
-000054 d199                      	rcall snake_create
+000053 d11d                      	rcall clear_matrix
+000054 d198                      	rcall snake_create
 000055 d0d3                      	rcall random
 000056 d0d8                      	rcall apple_create
                                  
@@ -1095,13 +1095,13 @@ AVRASM ver. 2.2.7  C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Sn
                                  		//USE Z REGISTER AS POINTER TO MATRIX, IF USED IN GAME UPDATE TO PREVENT ERRORS.
                                  
                                  		game_update:
-000060 d111                      			rcall clear_matrix
+000060 d110                      			rcall clear_matrix
 000061 d031                      			rcall move_direction
-000062 d11b                      			rcall snake_move
-000063 d0cf                      			rcall apple_update
-000064 d161                      			rcall snake_render
-000065 d105                      			rcall apple_check
-000066 d0f6                      			rcall snake_check
+000062 d11a                      			rcall snake_move
+000063 d161                      			rcall snake_render
+000064 d105                      			rcall apple_check
+000065 d0cd                      			rcall apple_update
+000066 d0f5                      			rcall snake_check
                                  
                                  		//Pop SREG and rTemp from stack and restore them.
 000067 910f                      		pop rTemp
@@ -1420,274 +1420,275 @@ AVRASM ver. 2.2.7  C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Sn
                                  
                                  		apple_convert_X:
 000149 1701                      			cp rTemp, rTemp2
-00014a f039                      			breq apple_valid_position
+00014a f021                      			breq apple_valid_position
 00014b 9488                      			clc
 00014c 0f88                      			lsl rTemp3
 00014d 9513                      			inc rTemp2
 00014e cffa                      			rjmp apple_convert_X
-                                 			
-00014f e0d1                      			ldi YH, HIGH(snake)
-000150 e0c8                      			ldi YL, LOW(snake)
-000151 2700                      			clr rTemp
                                  
                                  			apple_valid_position:
-000152 9109                      				ld rTemp, Y+
+00014f e0d1                      				ldi YH, HIGH(snake)
+000150 e0c8                      				ldi YL, LOW(snake)
+                                 
+                                 				compare_apple_snake:
+                                 				//Check if apple is not in snake.
+000151 9109                      				ld rTemp, Y+
+000152 9513                      				inc rTemp2
                                  
 000153 1503                      				cp rTemp, rAppleXY
 000154 f2d1                      				breq apple_create
                                  
-000155 9513                      				inc rTemp2
-000156 1771                      				cp rLength, rTemp2
-000157 f008                      				brlo apple_set
+000155 1771                      				cp rLength, rTemp2
+000156 f008                      				brlo apple_set
                                  
                                  				
-000158 cff9                      				rjmp apple_valid_position
+000157 cff9                      				rjmp compare_apple_snake
                                  
                                  	apple_set:
-000159 8100                      	ld rTemp, Z
-00015a 2b08                      	or rTemp, rTemp3
-00015b 8300                      	st Z, rTemp
+000158 8100                      	ld rTemp, Z
+000159 2b08                      	or rTemp, rTemp3
+00015a 8300                      	st Z, rTemp
                                  
-00015c 9508                      	ret
+00015b 9508                      	ret
                                  
                                  snake_check:
                                  	//Check for snake collision.
                                  	//rTemp = Current segment in snake, rTemp2 = i
-00015d e0f1                      	ldi ZH, HIGH(snake)
-00015e e0e8                      	ldi ZL, LOW(snake)
+00015c e0f1                      	ldi ZH, HIGH(snake)
+00015d e0e8                      	ldi ZL, LOW(snake)
                                  
                                  	//Skip head, increase rTemp2
-00015f 2711                      	clr rTemp2
-000160 9101                      	ld rTemp, Z+
-000161 9513                      	inc rTemp2
+00015e 2711                      	clr rTemp2
+00015f 9101                      	ld rTemp, Z+
+000160 9513                      	inc rTemp2
                                  
                                  	snake_compare:
                                  	//Compare Head with current segment of the snake.
-000162 9101                      	ld rTemp, Z+
-000163 1640                      	cp rHead, rTemp
-000164 f021                      	breq snake_collision
-000165 9513                      	inc rTemp2
+000161 9101                      	ld rTemp, Z+
+000162 1640                      	cp rHead, rTemp
+000163 f021                      	breq snake_collision
+000164 9513                      	inc rTemp2
                                  	//Compare if there is another segment in the snake
-000166 1717                      	cp rTemp2, rLength
-000167 f3d0                      	brlo snake_compare
-000168 9508                      	ret
+000165 1717                      	cp rTemp2, rLength
+000166 f3d0                      	brlo snake_compare
+000167 9508                      	ret
                                  
                                  	snake_collision:
-000169 deca                      		rcall reset
+000168 decb                      		rcall reset
                                  
-00016a 9508                      	ret
+000169 9508                      	ret
                                  
                                  apple_check:
                                  	//Check for an apple collision.
                                  
-00016b 8100                      	ld rTemp, Z
+00016a 8100                      	ld rTemp, Z
                                  
-00016c 1443                      	cp rHead, rAppleXY
-00016d f009                      	breq apple_collision
-00016e 9508                      	ret
+00016b 1443                      	cp rHead, rAppleXY
+00016c f009                      	breq apple_collision
+00016d 9508                      	ret
                                  	apple_collision:
-00016f 9573                      	inc rLength
-000170 dfbe                      	rcall apple_create
+00016e 9573                      	inc rLength
+00016f dfbf                      	rcall apple_create
                                  
-000171 9508                      	ret
+000170 9508                      	ret
                                  
                                  
                                  clear_matrix:
                                  	//Clear the matrix.
                                  
-000172 e0f1                      	ldi ZH, HIGH(matrix)
-000173 e0e0                      	ldi ZL, LOW(matrix)
+000171 e0f1                      	ldi ZH, HIGH(matrix)
+000172 e0e0                      	ldi ZL, LOW(matrix)
                                  
-000174 2700                      	clr rTemp
+000173 2700                      	clr rTemp
+000174 9301                      	st Z+, rTemp
 000175 9301                      	st Z+, rTemp
 000176 9301                      	st Z+, rTemp
 000177 9301                      	st Z+, rTemp
 000178 9301                      	st Z+, rTemp
 000179 9301                      	st Z+, rTemp
 00017a 9301                      	st Z+, rTemp
-00017b 9301                      	st Z+, rTemp
-00017c 8300                      	st Z, rTemp
+00017b 8300                      	st Z, rTemp
                                  
-00017d 9508                      	ret
+00017c 9508                      	ret
                                  
                                  snake_move:
-00017e e0d1                      	ldi YH, HIGH(snake)
-00017f e0c8                      	ldi YL, LOW(snake)
+00017d e0d1                      	ldi YH, HIGH(snake)
+00017e e0c8                      	ldi YL, LOW(snake)
                                  
                                  	snake_head:
-000180 8108                      		ld rTemp, Y
-000181 2f10                      		mov rTemp2, rTemp
+00017f 8108                      		ld rTemp, Y
+000180 2f10                      		mov rTemp2, rTemp
                                  
-000182 3063                      		cpi rDirection, 0b00000011
-000183 f1c9                      		breq snake_move_left
+000181 3063                      		cpi rDirection, 0b00000011
+000182 f1c9                      		breq snake_move_left
                                  
-000184 3064                      		cpi rDirection, 0b00000100
-000185 f0a1                      		breq snake_move_right
+000183 3064                      		cpi rDirection, 0b00000100
+000184 f0a1                      		breq snake_move_right
                                  
-000186 7f00                      		cbr rTemp, 0b00001111
-000187 9488                      		clc
+000185 7f00                      		cbr rTemp, 0b00001111
+000186 9488                      		clc
+000187 9506                      		lsr rTemp
 000188 9506                      		lsr rTemp
 000189 9506                      		lsr rTemp
 00018a 9506                      		lsr rTemp
-00018b 9506                      		lsr rTemp
                                  
-00018c 3061                      		cpi rDirection, 0b00000001
-00018d f0a9                      		breq snake_move_up
+00018b 3061                      		cpi rDirection, 0b00000001
+00018c f0a9                      		breq snake_move_up
                                  
-00018e 3062                      		cpi rDirection, 0b00000010
-00018f f101                      		breq snake_move_down
+00018d 3062                      		cpi rDirection, 0b00000010
+00018e f101                      		breq snake_move_down
                                  
                                  	snake_head_moved:
-000190 e010                      	ldi rTemp2, 0b00000000
-000191 8108                      	ld rTemp, Y
-000192 9249                      	st Y+, rHead
+00018f e010                      	ldi rTemp2, 0b00000000
+000190 8108                      	ld rTemp, Y
+000191 9249                      	st Y+, rHead
                                  
                                  	snake_loop:
-000193 8188                      		ld rTemp3, Y
-000194 9309                      		st Y+, rTemp
-000195 2f08                      		mov rTemp, rTemp3
+000192 8188                      		ld rTemp3, Y
+000193 9309                      		st Y+, rTemp
+000194 2f08                      		mov rTemp, rTemp3
                                  		
-000196 9513                      		inc rTemp2
-000197 1717                      		cp rTemp2, rLength
-000198 f3d0                      		brlo snake_loop
-000199 9508                      	ret
+000195 9513                      		inc rTemp2
+000196 1717                      		cp rTemp2, rLength
+000197 f3d0                      		brlo snake_loop
+000198 9508                      	ret
                                  
                                  snake_move_right:
-00019a 700f                      	cbr rTemp, 0b11110000
-00019b 3007                      	cpi rTemp, 0b00000111
-00019c f409                      	brne right_no_teleport
-00019d ef0f                      		ldi rTemp, 0b11111111
+000199 700f                      	cbr rTemp, 0b11110000
+00019a 3007                      	cpi rTemp, 0b00000111
+00019b f409                      	brne right_no_teleport
+00019c ef0f                      		ldi rTemp, 0b11111111
                                  	right_no_teleport:
-00019e 9503                      	inc rTemp
+00019d 9503                      	inc rTemp
                                  
-00019f 7f10                      	cbr rTemp2, 0b00001111
-0001a0 2b10                      	or rTemp2, rTemp
-0001a1 2e41                      	mov rHead, rTemp2
+00019e 7f10                      	cbr rTemp2, 0b00001111
+00019f 2b10                      	or rTemp2, rTemp
+0001a0 2e41                      	mov rHead, rTemp2
                                  
-0001a2 cfed                      	rjmp snake_head_moved
+0001a1 cfed                      	rjmp snake_head_moved
                                  
                                  snake_move_up:
-0001a3 3000                      	cpi rTemp, 0b00000000
-0001a4 f409                      	brne up_no_teleport
-0001a5 e008                      		ldi rTemp, 0b00001000
+0001a2 3000                      	cpi rTemp, 0b00000000
+0001a3 f409                      	brne up_no_teleport
+0001a4 e008                      		ldi rTemp, 0b00001000
                                  	up_no_teleport:
-0001a6 950a                      	dec rTemp
-0001a7 9488                      	clc
+0001a5 950a                      	dec rTemp
+0001a6 9488                      	clc
+0001a7 0f00                      	lsl rTemp
 0001a8 0f00                      	lsl rTemp
 0001a9 0f00                      	lsl rTemp
 0001aa 0f00                      	lsl rTemp
-0001ab 0f00                      	lsl rTemp
                                  
-0001ac 701f                      	cbr rTemp2, 0b11110000
-0001ad 2b10                      	or rTemp2, rTemp
-0001ae 2e41                      	mov rHead, rTemp2
+0001ab 701f                      	cbr rTemp2, 0b11110000
+0001ac 2b10                      	or rTemp2, rTemp
+0001ad 2e41                      	mov rHead, rTemp2
                                  
-0001af cfe0                      	rjmp snake_head_moved
+0001ae cfe0                      	rjmp snake_head_moved
                                  
                                  snake_move_down:
-0001b0 3007                      	cpi rTemp, 0b00000111
-0001b1 f409                      	brne down_no_teleport
-0001b2 ef0f                      		ldi rTemp, 0b11111111
+0001af 3007                      	cpi rTemp, 0b00000111
+0001b0 f409                      	brne down_no_teleport
+0001b1 ef0f                      		ldi rTemp, 0b11111111
                                  	down_no_teleport:
-0001b3 9503                      	inc rTemp
-0001b4 9488                      	clc
+0001b2 9503                      	inc rTemp
+0001b3 9488                      	clc
+0001b4 0f00                      	lsl rTemp
 0001b5 0f00                      	lsl rTemp
 0001b6 0f00                      	lsl rTemp
 0001b7 0f00                      	lsl rTemp
-0001b8 0f00                      	lsl rTemp
                                  
-0001b9 701f                      	cbr rTemp2, 0b11110000
-0001ba 2b10                      	or rTemp2, rTemp
-0001bb 2e41                      	mov rHead, rTemp2
+0001b8 701f                      	cbr rTemp2, 0b11110000
+0001b9 2b10                      	or rTemp2, rTemp
+0001ba 2e41                      	mov rHead, rTemp2
                                  
-0001bc cfd3                      	rjmp snake_head_moved
+0001bb cfd3                      	rjmp snake_head_moved
                                  
                                  snake_move_left:
-0001bd 700f                      	cbr rTemp, 0b11110000
-0001be 3000                      	cpi rTemp, 0b00000000
-0001bf f409                      	brne left_no_teleport
-0001c0 e008                      		ldi rTemp, 0b00001000
+0001bc 700f                      	cbr rTemp, 0b11110000
+0001bd 3000                      	cpi rTemp, 0b00000000
+0001be f409                      	brne left_no_teleport
+0001bf e008                      		ldi rTemp, 0b00001000
                                  	left_no_teleport:
-0001c1 950a                      	dec rTemp
+0001c0 950a                      	dec rTemp
                                  
-0001c2 7f10                      	cbr rTemp2, 0b00001111
-0001c3 2b10                      	or rTemp2, rTemp
-0001c4 2e41                      	mov rHead, rTemp2
+0001c1 7f10                      	cbr rTemp2, 0b00001111
+0001c2 2b10                      	or rTemp2, rTemp
+0001c3 2e41                      	mov rHead, rTemp2
                                  
-0001c5 cfca                      	rjmp snake_head_moved
+0001c4 cfca                      	rjmp snake_head_moved
                                  
                                  snake_render:
-0001c6 e0b1                      	ldi XH, HIGH(matrix)
-0001c7 e0a0                      	ldi XL, LOW(matrix)
+0001c5 e0b1                      	ldi XH, HIGH(matrix)
+0001c6 e0a0                      	ldi XL, LOW(matrix)
                                  
-0001c8 e090                      	ldi rTemp4, 0b00000000
+0001c7 e090                      	ldi rTemp4, 0b00000000
                                  
                                  	render_loop:
-0001c9 e0d1                      		ldi YH, HIGH(snake)
-0001ca e0c8                      		ldi YL, LOW(snake)
+0001c8 e0d1                      		ldi YH, HIGH(snake)
+0001c9 e0c8                      		ldi YL, LOW(snake)
                                  
-0001cb e010                      		ldi rTemp2, 0b00000000
+0001ca e010                      		ldi rTemp2, 0b00000000
                                  
                                  		snake_row_point_finder:
-0001cc 9109                      			ld rTemp, Y+
-0001cd 2f80                      			mov rTemp3, rTemp
+0001cb 9109                      			ld rTemp, Y+
+0001cc 2f80                      			mov rTemp3, rTemp
                                  			
-0001ce 7f00                      			cbr rTemp, 0b00001111
-0001cf 9488                      			clc
+0001cd 7f00                      			cbr rTemp, 0b00001111
+0001ce 9488                      			clc
+0001cf 9506                      			lsr rTemp
 0001d0 9506                      			lsr rTemp
 0001d1 9506                      			lsr rTemp
 0001d2 9506                      			lsr rTemp
-0001d3 9506                      			lsr rTemp
                                  
-0001d4 1709                      			cp rTemp, rTemp4
-0001d5 f471                      			brne point_not_row
+0001d3 1709                      			cp rTemp, rTemp4
+0001d4 f471                      			brne point_not_row
                                  
-0001d6 2f08                      			mov rTemp, rTemp3
-0001d7 7007                      			cbr rTemp, 0b11111000
-0001d8 e081                      			ldi rTemp3, 0b00000001
+0001d5 2f08                      			mov rTemp, rTemp3
+0001d6 7007                      			cbr rTemp, 0b11111000
+0001d7 e081                      			ldi rTemp3, 0b00000001
                                  			
                                  			decrease_loop:
-0001d9 3000                      				cpi rTemp, 0b00000000
-0001da f031                      				breq end_decrease_loop
-0001db 0000                      				nop
-0001dc 9488                      				clc
-0001dd 950a                      				dec rTemp
-0001de 0f88                      				lsl rTemp3
-0001df cff9                      				rjmp decrease_loop
-0001e0 0000                      				nop
+0001d8 3000                      				cpi rTemp, 0b00000000
+0001d9 f031                      				breq end_decrease_loop
+0001da 0000                      				nop
+0001db 9488                      				clc
+0001dc 950a                      				dec rTemp
+0001dd 0f88                      				lsl rTemp3
+0001de cff9                      				rjmp decrease_loop
+0001df 0000                      				nop
                                  			end_decrease_loop:
-0001e1 910c                      			ld rTemp, X
-0001e2 2b08                      			or rTemp, rTemp3
-0001e3 930c                      			st X, rTemp
+0001e0 910c                      			ld rTemp, X
+0001e1 2b08                      			or rTemp, rTemp3
+0001e2 930c                      			st X, rTemp
                                  
                                  			point_not_row:
                                  
-0001e4 9513                      			inc rTemp2
-0001e5 1717                      			cp rTemp2, rLength
-0001e6 f328                      			brlo snake_row_point_finder
-0001e7 0000                      			nop
-0001e8 9593                      		inc rTemp4
-0001e9 911d                      		ld rTemp2, X+
-0001ea 3098                      		cpi rTemp4, 0b00001000
-0001eb f2e8                      		brlo render_loop
-0001ec 0000                      		nop
+0001e3 9513                      			inc rTemp2
+0001e4 1717                      			cp rTemp2, rLength
+0001e5 f328                      			brlo snake_row_point_finder
+0001e6 0000                      			nop
+0001e7 9593                      		inc rTemp4
+0001e8 911d                      		ld rTemp2, X+
+0001e9 3098                      		cpi rTemp4, 0b00001000
+0001ea f2e8                      		brlo render_loop
+0001eb 0000                      		nop
                                  	//End render_loop
-0001ed 9508                      	ret
+0001ec 9508                      	ret
                                  
                                  snake_create:
-0001ee e073                      	ldi rLength, 0b00000011
+0001ed e073                      	ldi rLength, 0b00000011
                                  
-0001ef e0d1                      	ldi YH, HIGH(snake)
-0001f0 e0c8                      	ldi YL, LOW(snake)
+0001ee e0d1                      	ldi YH, HIGH(snake)
+0001ef e0c8                      	ldi YL, LOW(snake)
                                  
-0001f1 e000                      	ldi rTemp, 0b00000000
-0001f2 9309                      	st Y+, rTemp
-0001f3 e001                      	ldi rTemp, 0b00000001
-0001f4 9309                      	st Y+, rTemp
-0001f5 e002                      	ldi rTemp, 0b00000010
-0001f6 8308                      	st Y, rTemp
+0001f0 e000                      	ldi rTemp, 0b00000000
+0001f1 9309                      	st Y+, rTemp
+0001f2 e001                      	ldi rTemp, 0b00000001
+0001f3 9309                      	st Y+, rTemp
+0001f4 e002                      	ldi rTemp, 0b00000010
+0001f5 8308                      	st Y, rTemp
                                  
-0001f7 9508                      	ret
+0001f6 9508                      	ret
 
 
 RESOURCE USE INFORMATION
@@ -1707,7 +1708,7 @@ counted separately from r26..r31 here.
 "ATmega328P" register use summary:
 x  :   3 y  :  18 z  :  14 r0 :   0 r1 :   0 r2 :   4 r3 :   6 r4 :   7 
 r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
-r13:   0 r14:   0 r15:   0 r16: 160 r17:  32 r18:   4 r19:   4 r20:   2 
+r13:   0 r14:   0 r15:   0 r16: 159 r17:  32 r18:   4 r19:   4 r20:   2 
 r21:   4 r22:  13 r23:   6 r24:  11 r25:   4 r26:   1 r27:   1 r28:   5 
 r29:   5 r30:   3 r31:   3 
 Registers used: 22 out of 35 (62.9%)
@@ -1719,7 +1720,7 @@ brcc  :   0 brcs  :   0 break :   0 breq  :  14 brge  :   0 brhc  :   0
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   8 brlt  :   0 brmi  :   0 
 brne  :   5 brpl  :   0 brsh  :   2 brtc  :   0 brts  :   0 brvc  :   0 
 brvs  :   0 bset  :   0 bst   :   0 call  :   0 cbi   :  24 cbr   :  10 
-clc   :  10 clh   :   0 cli   :   0 cln   :   0 clr   :   7 cls   :   0 
+clc   :  10 clh   :   0 cli   :   0 cln   :   0 clr   :   6 cls   :   0 
 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :  11 cpc   :   0 
 cpi   :  18 cpse  :   0 dec   :   3 eor   :   0 fmul  :   0 fmuls :   0 
 fmulsu:   0 icall :   0 ijmp  :   0 in    :   1 inc   :  12 jmp   :   0 
@@ -1737,7 +1738,7 @@ Instructions used: 39 out of 113 (34.5%)
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x0003f0    908      0    908   32768   2.8%
+[.cseg] 0x000000 0x0003ee    906      0    906   32768   2.8%
 [.dseg] 0x000100 0x000117      0     23     23    2048   1.1%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 

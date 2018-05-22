@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.7  C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Tue May 22 14:51:51 2018
+AVRASM ver. 2.2.7  C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm Tue May 22 15:11:02 2018
 
 
 EQU  SIGNATURE_000 0000001e
@@ -714,19 +714,19 @@ DSEG matrix       00000100
 DSEG snake        00000108
 CSEG reset        00000034
 CSEG timer0       00000058
-CSEG clear_matrix 00000172
-CSEG snake_create 000001ee
+CSEG clear_matrix 00000171
+CSEG snake_create 000001ed
 CSEG random       00000129
 CSEG apple_create 0000012f
 CSEG main         0000006b
 CSEG timer0_continue 0000005c
 CSEG game_update  00000060
 CSEG move_direction 00000093
-CSEG snake_move   0000017e
+CSEG snake_move   0000017d
+CSEG snake_render 000001c5
+CSEG apple_check  0000016a
 CSEG apple_update 00000133
-CSEG snake_render 000001c6
-CSEG apple_check  0000016b
-CSEG snake_check  0000015d
+CSEG snake_check  0000015c
 CSEG input_x      00000082
 CSEG input_y      00000070
 CSEG screen_update 000000ac
@@ -743,24 +743,25 @@ CSEG apple_Y      00000135
 CSEG apple_convert_Y 00000140
 CSEG apple_X      00000145
 CSEG apple_convert_X 00000149
-CSEG apple_valid_position 00000152
-CSEG apple_set    00000159
-CSEG snake_compare 00000162
-CSEG snake_collision 00000169
-CSEG apple_collision 0000016f
-CSEG snake_head   00000180
-CSEG snake_move_left 000001bd
-CSEG snake_move_right 0000019a
-CSEG snake_move_up 000001a3
-CSEG snake_move_down 000001b0
-CSEG snake_head_moved 00000190
-CSEG snake_loop   00000193
-CSEG right_no_teleport 0000019e
-CSEG up_no_teleport 000001a6
-CSEG down_no_teleport 000001b3
-CSEG left_no_teleport 000001c1
-CSEG render_loop  000001c9
-CSEG snake_row_point_finder 000001cc
-CSEG point_not_row 000001e4
-CSEG decrease_loop 000001d9
-CSEG end_decrease_loop 000001e1
+CSEG apple_valid_position 0000014f
+CSEG compare_apple_snake 00000151
+CSEG apple_set    00000158
+CSEG snake_compare 00000161
+CSEG snake_collision 00000168
+CSEG apple_collision 0000016e
+CSEG snake_head   0000017f
+CSEG snake_move_left 000001bc
+CSEG snake_move_right 00000199
+CSEG snake_move_up 000001a2
+CSEG snake_move_down 000001af
+CSEG snake_head_moved 0000018f
+CSEG snake_loop   00000192
+CSEG right_no_teleport 0000019d
+CSEG up_no_teleport 000001a5
+CSEG down_no_teleport 000001b2
+CSEG left_no_teleport 000001c0
+CSEG render_loop  000001c8
+CSEG snake_row_point_finder 000001cb
+CSEG point_not_row 000001e3
+CSEG decrease_loop 000001d8
+CSEG end_decrease_loop 000001e0
