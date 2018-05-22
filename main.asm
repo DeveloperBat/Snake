@@ -48,6 +48,7 @@ reset:
 	ldi rTime, STARTTIME
 	//Set rCurrentTime
 	ldi rCurrentTime, 0
+
 	//Prescaling = 1024
 	ldi rTemp, 5
 	out TCCR0B, rTemp
@@ -109,10 +110,12 @@ timer0:
 
 		game_update:
 			rcall clear_matrix
-			//rcall create_apple
+			rcall apple_check
+			rcall snake_check
 			rcall apple_update
 			rcall snake_move
 			rcall snake_render
+
 		//Pop SREG and rTemp from stack and restore them.
 		pop rTemp
 		out SREG, rTemp
@@ -441,6 +444,44 @@ apple_update:
 	ld rTemp, Z
 	or rTemp, rTemp3
 	st Z, rTemp
+
+	ret
+
+snake_check:
+	//Check for snake collision.
+	//rTemp = Current segment in snake, rTemp2 = i
+	ldi ZH, HIGH(snake)
+	ldi ZL, LOW(snake)
+
+	//Skip head, increase rTemp2
+	clr rTemp2
+	ld rTemp, Z+
+	inc rTemp2
+
+	snake_compare:
+	//Compare Head with current segment of the snake.
+	ld rTemp, Z+
+	cp rHead, rTemp
+	breq snake_collision
+
+	//Compare if there is another segment in the snake
+	cp rLength, rTemp2
+	brlt snake_compare
+	ret
+
+	snake_collision:
+		rcall reset
+
+	ret
+
+apple_check:
+	//Check for an apple collision.
+
+	cp rHead, rAppleXY
+	breq apple_collision
+	ret
+	apple_collision:
+	rcall apple_create
 
 	ret
 

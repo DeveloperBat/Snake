@@ -1,18 +1,18 @@
 <ASSEMBLER_INFO>
  <VERSION>2.2.7</VERSION>
  <DEVICE>"ATmega328P"</DEVICE>
- <WORKING_DIR>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\Debug</WORKING_DIR>
+ <WORKING_DIR>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\Debug</WORKING_DIR>
  <INCLUDE_PATH>
   <DIR>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.150\avrasm\inc</DIR>
   <DIR>C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avrassembler\Include</DIR>
   <DIR></DIR>
  </INCLUDE_PATH>
- <SOURCE_FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</SOURCE_FILE>
+ <SOURCE_FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</SOURCE_FILE>
  <INCLUDED_FILES>
   <FILE>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.150\avrasm\inc\m328pdef.inc</FILE>
  </INCLUDED_FILES>
  <OBJECT_FILES>
-  <FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\Debug\Snake.obj</FILE>
+  <FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\Debug\Snake.obj</FILE>
  </OBJECT_FILES>
  <HEX_FILES>
   <FILE>Snake.hex</FILE>
@@ -22,6 +22,60 @@
   <FILE>Snake.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
+<<<<<<< HEAD
+  <matrix><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>29</LINE></matrix>
+  <snake><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>30</LINE></snake>
+  <reset><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>40</LINE></reset>
+  <timer0><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>90</LINE></timer0>
+  <clear_matrix><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>479</LINE></clear_matrix>
+  <snake_create><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>660</LINE></snake_create>
+  <random><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>371</LINE></random>
+  <apple_create><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>381</LINE></apple_create>
+  <main><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>125</LINE></main>
+  <timer0_continue><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>100</LINE></timer0_continue>
+  <game_update><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>111</LINE></game_update>
+  <apple_check><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>467</LINE></apple_check>
+  <snake_check><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>440</LINE></snake_check>
+  <apple_update><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>391</LINE></apple_update>
+  <snake_move><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>497</LINE></snake_move>
+  <snake_render><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>603</LINE></snake_render>
+  <input_x><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>151</LINE></input_x>
+  <input_y><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>133</LINE></input_y>
+  <move_direction><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>167</LINE></move_direction>
+  <screen_update><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>199</LINE></screen_update>
+  <ad_doneY><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>144</LINE></ad_doneY>
+  <ad_doneX><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>160</LINE></ad_doneX>
+  <y_greater><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>183</LINE></y_greater>
+  <y_lower><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>187</LINE></y_lower>
+  <x_greater><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>191</LINE></x_greater>
+  <x_lower><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>195</LINE></x_lower>
+  <reset_columns><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>307</LINE></reset_columns>
+  <light_columns><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>319</LINE></light_columns>
+  <apple_Y><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>396</LINE></apple_Y>
+  <apple_convert_Y><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>411</LINE></apple_convert_Y>
+  <apple_X><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>418</LINE></apple_X>
+  <apple_convert_X><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>425</LINE></apple_convert_X>
+  <apple_set><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>433</LINE></apple_set>
+  <snake_compare><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>451</LINE></snake_compare>
+  <snake_collision><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>462</LINE></snake_collision>
+  <apple_collision><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>473</LINE></apple_collision>
+  <snake_head><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>501</LINE></snake_head>
+  <snake_move_left><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>589</LINE></snake_move_left>
+  <snake_move_right><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>539</LINE></snake_move_right>
+  <snake_move_up><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>553</LINE></snake_move_up>
+  <snake_move_down><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>571</LINE></snake_move_down>
+  <snake_head_moved><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>524</LINE></snake_head_moved>
+  <snake_loop><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>529</LINE></snake_loop>
+  <right_no_teleport><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>544</LINE></right_no_teleport>
+  <up_no_teleport><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>557</LINE></up_no_teleport>
+  <down_no_teleport><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>575</LINE></down_no_teleport>
+  <left_no_teleport><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>594</LINE></left_no_teleport>
+  <render_loop><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>609</LINE></render_loop>
+  <snake_row_point_finder><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>615</LINE></snake_row_point_finder>
+  <point_not_row><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>646</LINE></point_not_row>
+  <decrease_loop><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>633</LINE></decrease_loop>
+  <end_decrease_loop><FILE>C:\Users\Hampus Österlund\Documents\Atmel Studio\7.0\Snake\Snake\main.asm</FILE><LINE>641</LINE></end_decrease_loop>
+=======
   <matrix><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>29</LINE></matrix>
   <snake><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>30</LINE></snake>
   <reset><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>40</LINE></reset>
@@ -69,5 +123,6 @@
   <point_not_row><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>606</LINE></point_not_row>
   <decrease_loop><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>592</LINE></decrease_loop>
   <end_decrease_loop><FILE>\\hsnas6\StudentHome\2017\a17ricfo\Desktop\Snake\main.asm</FILE><LINE>601</LINE></end_decrease_loop>
+>>>>>>> 598fbe08d8f6aa6876de98a89df2e4ce904a9ba3
  </LABELS>
 </ASSEMBLER_INFO>
