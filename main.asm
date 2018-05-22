@@ -79,7 +79,7 @@ reset:
 	sts ADCSRA, rTemp
 
 	//Initiate stuff.
-	ldi rDirection, 0b00000100
+	ldi rDirection, 0b00000011
 	rcall clear_matrix
 	rcall snake_create
 	rcall random
@@ -93,7 +93,7 @@ timer0:
 
 	//Compare with rTime register.
 	cp rTime, rCurrentTime
-	brlt timer0_continue
+	brlo timer0_continue
 	inc rCurrentTime
 	reti
 
@@ -110,11 +110,12 @@ timer0:
 
 		game_update:
 			rcall clear_matrix
-			rcall apple_check
-			rcall snake_check
+			rcall move_direction
 			rcall snake_move
 			rcall apple_update
 			rcall snake_render
+			rcall apple_check
+			rcall snake_check
 
 		//Pop SREG and rTemp from stack and restore them.
 		pop rTemp
@@ -126,7 +127,6 @@ main:
 	rcall input_x
 	rcall input_y
 	rcall random
-	rcall move_direction
 	rcall screen_update
 	rjmp main
 
@@ -440,7 +440,22 @@ apple_update:
 			inc rTemp2
 			rjmp apple_convert_X
 			
+			ldi YH, HIGH(snake)
+			ldi YL, LOW(snake)
+			clr rTemp
+
 			apple_valid_position:
+				ld rTemp, Y+
+
+				cp rTemp, rAppleXY
+				breq apple_create
+
+				inc rTemp2
+				cp rLength, rTemp2
+				brlo apple_set
+
+				
+				rjmp apple_valid_position
 
 	apple_set:
 	ld rTemp, Z
@@ -465,10 +480,10 @@ snake_check:
 	ld rTemp, Z+
 	cp rHead, rTemp
 	breq snake_collision
-
+	inc rTemp2
 	//Compare if there is another segment in the snake
-	cp rLength, rTemp2
-	brlt snake_compare
+	cp rTemp2, rLength
+	brlo snake_compare
 	ret
 
 	snake_collision:
@@ -478,6 +493,8 @@ snake_check:
 
 apple_check:
 	//Check for an apple collision.
+
+	ld rTemp, Z
 
 	cp rHead, rAppleXY
 	breq apple_collision
