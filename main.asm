@@ -22,7 +22,7 @@
 
 
 //Time for timer0
-.EQU STARTTIME = 10
+.EQU STARTTIME = 15
 .EQU MAXLENGTH = 15
 
 .DSEG
@@ -445,22 +445,22 @@ apple_update:
 			apple_valid_position:
 				ldi YH, HIGH(snake)
 				ldi YL, LOW(snake)
+				clr rTemp2
 
 				compare_apple_snake:
 				//Check if apple is not in snake.
 				ld rTemp, Y+
-				inc rTemp2
 
 				cp rTemp, rAppleXY
 				breq apple_create
 
 				cp rLength, rTemp2
-				brlo apple_set
+				brlo apple_correct
 
-				
+				inc rTemp2
 				rjmp compare_apple_snake
 
-	apple_set:
+	apple_correct:
 	ld rTemp, Z
 	or rTemp, rTemp3
 	st Z, rTemp
