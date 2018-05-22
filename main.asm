@@ -133,6 +133,7 @@ main:
 input_y:
 	// Y input
 	lds rTemp, ADMUX
+	// Reset first bit so it dosn't take port 5
 	cbr rTemp, 1
 	ori rTemp, 0b00100100
 	sts ADMUX, rTemp
@@ -177,6 +178,7 @@ move_direction:
 	cpi rJoyX, 100
 	brlo x_lower
 
+	// Used to jump back if you try to invert the direction
 	move_done:
 
 	ret
@@ -475,7 +477,7 @@ snake_check:
 	clr rTemp2
 	ld rTemp, Z+
 	inc rTemp2
-
+	
 	snake_compare:
 	//Compare Head with current segment of the snake.
 	ld rTemp, Z+
@@ -530,15 +532,20 @@ snake_move:
 	ldi YL, LOW(snake)
 
 	snake_head:
+		//Have two copys to be able to change one
+		//rTemp: main usage for modifying
+		//rTemp2: used as backup/reset
 		ld rTemp, Y
 		mov rTemp2, rTemp
 
+		//Check the values from move_direction
 		cpi rDirection, 0b00000011
 		breq snake_move_left
 
 		cpi rDirection, 0b00000100
 		breq snake_move_right
 
+		//Move top bits to lower to use it as row number
 		cbr rTemp, 0b00001111
 		clc
 		lsr rTemp
@@ -554,6 +561,7 @@ snake_move:
 
 	snake_head_moved:
 	ldi rTemp2, 0b00000000
+	//To copy it as the next point
 	ld rTemp, Y
 	st Y+, rHead
 
@@ -568,13 +576,16 @@ snake_move:
 	ret
 
 snake_move_right:
+	//Dealing with column so remove top bits
 	cbr rTemp, 0b11110000
 	cpi rTemp, 0b00000111
 	brne right_no_teleport
+		//Make it overflow to teleport it to the other side
 		ldi rTemp, 0b11111111
 	right_no_teleport:
 	inc rTemp
 
+	//Clear current column bits and set the new ones
 	cbr rTemp2, 0b00001111
 	or rTemp2, rTemp
 	mov rHead, rTemp2
@@ -582,17 +593,20 @@ snake_move_right:
 	rjmp snake_head_moved
 
 snake_move_up:
+	//Already formated in snake_head
 	cpi rTemp, 0b00000000
 	brne up_no_teleport
 		ldi rTemp, 0b00001000
 	up_no_teleport:
 	dec rTemp
+	// Move it to the row bits
 	clc
 	lsl rTemp
 	lsl rTemp
 	lsl rTemp
 	lsl rTemp
 
+	//Clear current row bits and set the new ones
 	cbr rTemp2, 0b11110000
 	or rTemp2, rTemp
 	mov rHead, rTemp2
@@ -600,17 +614,20 @@ snake_move_up:
 	rjmp snake_head_moved
 
 snake_move_down:
+	//Already formated in snake_head
 	cpi rTemp, 0b00000111
 	brne down_no_teleport
 		ldi rTemp, 0b11111111
 	down_no_teleport:
 	inc rTemp
+	// Move it to the row bits
 	clc
 	lsl rTemp
 	lsl rTemp
 	lsl rTemp
 	lsl rTemp
 
+	//Clear current row bits and set the new ones
 	cbr rTemp2, 0b11110000
 	or rTemp2, rTemp
 	mov rHead, rTemp2
@@ -618,6 +635,7 @@ snake_move_down:
 	rjmp snake_head_moved
 
 snake_move_left:
+	//Dealing with column so remove top bits
 	cbr rTemp, 0b11110000
 	cpi rTemp, 0b00000000
 	brne left_no_teleport
@@ -625,6 +643,7 @@ snake_move_left:
 	left_no_teleport:
 	dec rTemp
 
+	//Clear current column bits and set the new ones
 	cbr rTemp2, 0b00001111
 	or rTemp2, rTemp
 	mov rHead, rTemp2
@@ -635,18 +654,22 @@ snake_render:
 	ldi XH, HIGH(matrix)
 	ldi XL, LOW(matrix)
 
+	//Row counter
 	ldi rTemp4, 0b00000000
 
 	render_loop:
 		ldi YH, HIGH(snake)
 		ldi YL, LOW(snake)
 
+		//Snake counter
 		ldi rTemp2, 0b00000000
 
 		snake_row_point_finder:
+			//Get snake point and copy for modification
 			ld rTemp, Y+
 			mov rTemp3, rTemp
 			
+			//To check if current row
 			cbr rTemp, 0b00001111
 			clc
 			lsr rTemp
@@ -654,33 +677,40 @@ snake_render:
 			lsr rTemp
 			lsr rTemp
 
+			//Check if current row
 			cp rTemp, rTemp4
 			brne point_not_row
 
+			//is current so save first 3 bits to count down which column to light up
 			mov rTemp, rTemp3
 			cbr rTemp, 0b11111000
 			ldi rTemp3, 0b00000001
 			
 			decrease_loop:
+				//if count is 0 move is completed
 				cpi rTemp, 0b00000000
 				breq end_decrease_loop
 				nop
 				clc
 				dec rTemp
+				// Move to next column
 				lsl rTemp3
 				rjmp decrease_loop
 				nop
 			end_decrease_loop:
+			//Get current lights and insert new one
 			ld rTemp, X
 			or rTemp, rTemp3
 			st X, rTemp
 
 			point_not_row:
 
+			//Increment to see if there are any more snake points
 			inc rTemp2
 			cp rTemp2, rLength
 			brlo snake_row_point_finder
 			nop
+		//Go to next row
 		inc rTemp4
 		ld rTemp2, X+
 		cpi rTemp4, 0b00001000
@@ -690,11 +720,13 @@ snake_render:
 	ret
 
 snake_create:
+	// Start length 3
 	ldi rLength, 0b00000011
 
 	ldi YH, HIGH(snake)
 	ldi YL, LOW(snake)
 
+	//First top left points
 	ldi rTemp, 0b00000000
 	st Y+, rTemp
 	ldi rTemp, 0b00000001
