@@ -112,8 +112,8 @@ timer0:
 			rcall clear_matrix
 			rcall apple_check
 			rcall snake_check
-			rcall apple_update
 			rcall snake_move
+			rcall apple_update
 			rcall snake_render
 
 		//Pop SREG and rTemp from stack and restore them.
@@ -424,11 +424,13 @@ apple_update:
 
 		apple_convert_X:
 			cp rTemp, rTemp2
-			breq apple_set
+			breq apple_valid_position
 			clc
 			lsl rTemp3
 			inc rTemp2
 			rjmp apple_convert_X
+			
+			apple_valid_position:
 
 	apple_set:
 	ld rTemp, Z
@@ -471,6 +473,7 @@ apple_check:
 	breq apple_collision
 	ret
 	apple_collision:
+	inc rLength
 	rcall apple_create
 
 	ret
