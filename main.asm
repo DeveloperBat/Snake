@@ -174,22 +174,32 @@ move_direction:
 	cpi rJoyX, 100
 	brlo x_lower
 
+	move_done:
+
 	ret
 
 	// Joystick up
 	y_greater:
+		cpi rDirection, 0b00000010
+		breq move_done
 		ldi rDirection, 0b00000001
 		ret
 	// Joystick down
 	y_lower:
+		cpi rDirection, 0b00000001
+		breq move_done
 		ldi rDirection, 0b00000010
 		ret
 	// Joystick left
 	x_greater:
+		cpi rDirection, 0b00000100
+		breq move_done
 		ldi rDirection, 0b00000011
 		ret
 	// Joystick right
 	x_lower:
+		cpi rDirection, 0b00000011
+		breq move_done
 		ldi rDirection, 0b00000100
 		ret
 
