@@ -7,6 +7,7 @@
 
 .DEF rRandomXY = r2
 .DEF rAppleXY = r3
+.DEF rHead = r4
 
 .DEF rTemp = r16
 .DEF rTemp2 = r17
@@ -19,14 +20,14 @@
 .DEF rTemp3 = r24
 .DEF rTemp4 = r25
 
+
 //Time for timer0
 .EQU STARTTIME = 10
-.EQU DEADZONEHIGH = 0x89
-.EQU DEADZONELOW = 0x75
+.EQU MAXLENGTH = 15
 
 .DSEG
 matrix:	.BYTE 8
-snake: .BYTE 15
+snake: .BYTE MAXLENGTH
 
 .CSEG
 //Interrupt vector table.
@@ -78,7 +79,9 @@ reset:
 	sts ADCSRA, rTemp
 
 	//Initiate stuff.
+	ldi rDirection, 0x1
 	rcall clear_matrix
+	rcall snake_create
 	rcall random
 	rcall apple_create
 
@@ -107,11 +110,14 @@ timer0:
 
 		game_update:
 			rcall clear_matrix
+<<<<<<< HEAD
 			rcall apple_check
+=======
+			//rcall create_apple
+>>>>>>> 3da8aca4ae54b112079bcdd0a5059907329d600b
 			rcall apple_update
-			//rcall snake_move
-
-		end_game_update:
+			rcall snake_move
+			rcall snake_render
 		//Pop SREG and rTemp from stack and restore them.
 		pop rTemp
 		out SREG, rTemp
@@ -177,19 +183,19 @@ move_direction:
 
 	// Joystick up
 	y_greater:
-		lds rDirection, 0x1
+		lds rDirection, 0b00000001
 		ret
 	// Joystick down
 	y_lower:
-		lds rDirection, 0x2
+		lds rDirection, 0b00000010
 		ret
 	// Joystick left
 	x_greater:
-		lds rDirection, 0x3
+		lds rDirection, 0b00000011
 		ret
 	// Joystick right
 	x_lower:
-		lds rDirection, 0x4
+		lds rDirection, 0b00000100
 		ret
 
 screen_update:
@@ -490,55 +496,69 @@ clear_matrix:
 
 	ret
 
-/*snake_move:
+snake_move:
 	ldi YH, HIGH(snake)
 	ldi YL, LOW(snake)
 
 	snake_head:
 		ld rTemp, Y
-		lds rTemp2, rTemp
+		mov rTemp2, rTemp
 
-		cpi rDirection, 0x1
-		breq snake_move_up
-
-		cpi rDirection, 0x2
-		breq snake_move_down
-
-		cpi rDirection, 0x3
+		cpi rDirection, 0b00000011
 		breq snake_move_left
 
-		cpi rDirection, 0x4
+		cpi rDirection, 0b00000100
 		breq snake_move_right
 
+		cbr rTemp, 0b00001111
+		clc
+		lsr rTemp
+		lsr rTemp
+		lsr rTemp
+		lsr rTemp
+
+		cpi rDirection, 0b00000001
+		breq snake_move_up
+
+		cpi rDirection, 0b00000010
+		breq snake_move_down
+
 	snake_head_moved:
-		
-	
 	ldi rTemp2, 0b00000000
-	ld rTemp, Y+
+	ld rTemp, Y
+	st Y+, rHead
 
 	snake_loop:
 		ld rTemp3, Y
-		sts Y+, rTemp
-		ld rTemp, rTemp3
+		st Y+, rTemp
+		mov rTemp, rTemp3
 		
 		inc rTemp2
-		cpi rTemp2, rLength
+		cp rTemp2, rLength
 		brlo snake_loop
-
 	ret
-	
+
+snake_move_right:
+	cbr rTemp, 0b11110000
+	cpi rTemp, 0b00000111
+	brne right_no_teleport
+		ldi rTemp, 0b11111111
+	right_no_teleport:
+	inc rTemp
+
+	cbr rTemp2, 0b00001111
+	or rTemp2, rTemp
+	mov rHead, rTemp2
+
+	rjmp snake_head_moved
 
 snake_move_up:
-	lsr rTemp
-	lsr rTemp
-	lsr rTemp
-	lsr rTemp
-	
 	cpi rTemp, 0b00000000
 	brne up_no_teleport
 		ldi rTemp, 0b00001000
 	up_no_teleport:
 	dec rTemp
+	clc
 	lsl rTemp
 	lsl rTemp
 	lsl rTemp
@@ -546,21 +566,17 @@ snake_move_up:
 
 	cbr rTemp2, 0b11110000
 	or rTemp2, rTemp
-	st Y, rTemp2
+	mov rHead, rTemp2
 
 	rjmp snake_head_moved
 
 snake_move_down:
-	lsr rTemp
-	lsr rTemp
-	lsr rTemp
-	lsr rTemp
-
 	cpi rTemp, 0b00000111
 	brne down_no_teleport
 		ldi rTemp, 0b11111111
 	down_no_teleport:
 	inc rTemp
+	clc
 	lsl rTemp
 	lsl rTemp
 	lsl rTemp
@@ -568,7 +584,7 @@ snake_move_down:
 
 	cbr rTemp2, 0b11110000
 	or rTemp2, rTemp
-	st Y, rTemp2
+	mov rHead, rTemp2
 
 	rjmp snake_head_moved
 
@@ -582,28 +598,13 @@ snake_move_left:
 
 	cbr rTemp2, 0b00001111
 	or rTemp2, rTemp
-	st Y, rTemp2
-
-	rjmp snake_head_moved
-
-snake_move_right:
-	cbr rTemp, 0b11110000
-	cpi rTemp, 0b00000111
-	brne left_no_teleport
-		ldi rTemp, 0b11111111
-	//LEFT_NO_TELEPORT DECLARED TWICE HERE. IS IT SUPPOSED TO SAY RIGHT_NO_TELEPORT?
-	left_no_teleport:
-	inc rTemp
-
-	cbr rTemp2, 0b00001111
-	or rTemp2, rTemp
-	st Y, rTemp2
+	mov rHead, rTemp2
 
 	rjmp snake_head_moved
 
 snake_render:
 	ldi XH, HIGH(matrix)
-	ldi XL, HIGH(matrix)
+	ldi XL, LOW(matrix)
 
 	ldi rTemp4, 0b00000000
 
@@ -615,40 +616,60 @@ snake_render:
 
 		snake_row_point_finder:
 			ld rTemp, Y+
-			ld rTemp3, rTemp
+			mov rTemp3, rTemp
 			
+			cbr rTemp, 0b00001111
+			clc
 			lsr rTemp
 			lsr rTemp
 			lsr rTemp
 			lsr rTemp
 
-			cpi rTemp, rTemp2
+			cp rTemp, rTemp4
 			brne point_not_row
 
-			ld rTemp, rTemp3
+			mov rTemp, rTemp3
 			cbr rTemp, 0b11110000
 			ldi rTemp3, 0b00000001
 			
 			decrease_loop:
 				cpi rTemp, 0b00000000
 				breq end_decrease_loop
+				nop
 				dec rTemp
 				lsl rTemp3
+				jmp decrease_loop
 
 			end_decrease_loop:
 			ld rTemp, X
-			ori rTemp, rTemp3
+			or rTemp, rTemp3
 			st X, rTemp
 
 			point_not_row:
 
 			inc rTemp2
-			cpi rTemp2, rLength
+			cp rTemp2, rLength
 			brlo snake_row_point_finder
+			nop
 		inc rTemp4
-		inc X
+		ld rTemp2, X+
 		cpi rTemp4, 0b00001000
 		brlo render_loop
+		nop
 	//End render_loop
 	ret
-	*/
+
+snake_create:
+	ldi rLength, 0b00000011
+
+	ldi YH, HIGH(snake)
+	ldi YL, LOW(snake)
+
+	ldi rTemp, 0b00000000
+	st Y+, rTemp
+	ldi rTemp, 0b00000001
+	st Y+, rTemp
+	ldi rTemp, 0b00000010
+	st Y, rTemp
+
+	ret
