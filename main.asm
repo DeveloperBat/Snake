@@ -74,22 +74,8 @@ reset:
 	ori rTemp, 0b10000111
 	sts ADCSRA, rTemp
 
-	//Make a pointer to Matrix and store it in Y.
-	ldi YH, HIGH(matrix)
-	ldi YL, LOW(matrix)
-
-	//Clear the matrix.
-	clr rTemp
-	st Y+, rTemp
-	st Y+, rTemp
-	st Y+, rTemp
-	st Y+, rTemp
-	st Y+, rTemp
-	st Y+, rTemp
-	st Y+, rTemp
-	st Y, rTemp
-
 	//Initiate stuff.
+	rcall clear_matrix
 	rcall random
 	rcall create_apple
 
@@ -117,6 +103,7 @@ timer0:
 		//USE Z REGISTER AS POINTER TO MATRIX, IF USED IN GAME UPDATE TO PREVENT ERRORS.
 
 		game_update:
+			rcall clear_matrix
 			rcall apple_update
 			//rrcall snake_update
 			rjmp end_game_update
@@ -413,34 +400,52 @@ random:
 	ret
 
 create_apple:
-		//Create an apple for the matrix.
+	//Create an apple for the matrix.
 
-		//Copy random values to the new apple position.
-		mov rAppleX, rRandomX
-		mov rAppleY, rRandomY
+	//Copy random values to the new apple position.
+	mov rAppleX, rRandomX
+	mov rAppleY, rRandomY
 
-		//Remove all bits except the 3 lsb. (least significant bits)
-		ldi rTemp, 0b00000111
-		and rAppleX, rTemp
-		and rAppleY, rTemp
+	//Remove all bits except the 3 lsb. (least significant bits)
+	ldi rTemp, 0b00000111
+	and rAppleX, rTemp
+	and rAppleY, rTemp
 
 
-		//Get the LED that will represent the apple.
-		//rTemp = Column, rTemp2 = i
-		clc
-		ldi rTemp, 0b00000001
-		clr rTemp2
+	//Get the LED that will represent the apple.
+	//rTemp = Column, rTemp2 = i
+	clc
+	ldi rTemp, 0b00000001
+	clr rTemp2
 
-		convert_apple_x:
-			//Convert lsb to matrix column data.
-			cp rTemp2, rAppleX
-			breq set_apple_x
-			lsl rTemp
-			inc rTemp2
-			rjmp convert_apple_x
+	convert_apple_x:
+		//Convert lsb to matrix column data.
+		cp rTemp2, rAppleX
+		breq set_apple_x
+		lsl rTemp
+		inc rTemp2
+		rjmp convert_apple_x
 
-			set_apple_x:
-				clr rAppleX
-				add rAppleX, rTemp
+		set_apple_x:
+			clr rAppleX
+			add rAppleX, rTemp
 
-		ret
+	ret
+
+clear_matrix:
+	//Clear the matrix.
+
+	ldi ZH, HIGH(matrix)
+	ldi ZL, LOW(matrix)
+
+	clr rTemp
+	st Y+, rTemp
+	st Y+, rTemp
+	st Y+, rTemp
+	st Y+, rTemp
+	st Y+, rTemp
+	st Y+, rTemp
+	st Y+, rTemp
+	st Y, rTemp
+
+	ret
